@@ -42,6 +42,7 @@ def criar_tabelas():
             usuario_id INTEGER NOT NULL,
             nome TEXT NOT NULL,
             endereco TEXT,
+            tipo TEXT NOT NULL DEFAULT 'Não informado',
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
         )
     """)
