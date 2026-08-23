@@ -69,9 +69,13 @@ def tela_login():
 def tela_cadastro_imovel(usuario_logado):
     print("\n--- Cadastro de imóvel ---")
     nome = input("Nome/apelido do imóvel (ex.: Casa, Apartamento): ")
+
+    print(f"Tipos sugeridos: {', '.join(imovel.TIPOS_VALIDOS)}")
+    tipo = input("Tipo do imóvel: ")
+
     endereco = input("Endereço (opcional): ")
 
-    ok, resultado = imovel.cadastrar_imovel(usuario_logado["id"], nome, endereco)
+    ok, resultado = imovel.cadastrar_imovel(usuario_logado["id"], nome, tipo, endereco)
     if ok:
         print(f"Imóvel cadastrado com sucesso! (id {resultado})")
     else:
@@ -86,7 +90,7 @@ def escolher_imovel(usuario_logado):
 
     print("\nSeus imóveis:")
     for item in imoveis:
-        print(f"  {item['id']} - {item['nome']} ({item['endereco'] or 'sem endereço'})")
+        print(f"  {item['id']} - {item['nome']} ({item['tipo']}, {item['endereco'] or 'sem endereço'})")
 
     id_escolhido = ler_inteiro("Digite o id do imóvel: ")
     escolhidos = [i for i in imoveis if i["id"] == id_escolhido]
