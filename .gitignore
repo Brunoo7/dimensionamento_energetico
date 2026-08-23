@@ -1,0 +1,23 @@
+# Banco de dados (dados locais, não deve ir para o repositório)
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache e bytecode do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambientes virtuais
+venv/
+.venv/
+env/
+ENV/
+
+# Configurações de IDE
+.vscode/
+.idea/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
