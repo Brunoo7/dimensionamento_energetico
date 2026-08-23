@@ -6,6 +6,7 @@ de energia elétrica (em kWh) de um imóvel.
 """
 
 from dados import conectar
+import imovel
 
 NOMES_MES = [
     "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -30,8 +31,13 @@ def validar_dados_consumo(mes, ano, consumo_kwh):
     return True, ""
 
 
-def registrar_consumo(imovel_id, mes, ano, consumo_kwh):
-    """Registra (ou atualiza, se já existir) o consumo de um mês/ano para o imóvel."""
+def registrar_consumo(usuario_id, imovel_id, mes, ano, consumo_kwh):
+    """Registra (ou atualiza, se já existir) o consumo de um mês/ano para o imóvel.
+    PB15 - só registra se o imóvel realmente pertencer ao usuário logado.
+    """
+    if not imovel.imovel_pertence_ao_usuario(imovel_id, usuario_id):
+        return False, "Imóvel não encontrado ou não pertence a este usuário."
+
     valido, mensagem = validar_dados_consumo(mes, ano, consumo_kwh)
     if not valido:
         return False, mensagem
@@ -52,8 +58,13 @@ def registrar_consumo(imovel_id, mes, ano, consumo_kwh):
     return True, "Consumo registrado com sucesso."
 
 
-def listar_consumos_imovel(imovel_id):
-    """Retorna todo o histórico de consumo (vários meses) de um imóvel, em ordem cronológica."""
+def listar_consumos_imovel(usuario_id, imovel_id):
+    """Retorna todo o histórico de consumo (vários meses) de um imóvel, em ordem cronológica.
+    PB15 - retorna lista vazia se o imóvel não pertencer ao usuário logado.
+    """
+    if not imovel.imovel_pertence_ao_usuario(imovel_id, usuario_id):
+        return []
+
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute(
