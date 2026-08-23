@@ -11,6 +11,7 @@ Ponto de entrada do sistema. Menu de linha de comando cobrindo a Sprint 1:
     PB11 - Resumo energético
     PB13 - Validações
     PB14 - Persistência em banco (SQLite)
+    PB15 - Segurança (isolamento de dados entre usuários)
 """
 
 from dados import criar_tabelas
@@ -102,7 +103,9 @@ def tela_informar_consumo(usuario_logado):
     ano = ler_inteiro("Ano (ex.: 2026): ")
     consumo_kwh = ler_numero("Consumo do mês em kWh: ")
 
-    ok, mensagem = consumo.registrar_consumo(imovel_escolhido["id"], mes, ano, consumo_kwh)
+    ok, mensagem = consumo.registrar_consumo(
+        usuario_logado["id"], imovel_escolhido["id"], mes, ano, consumo_kwh
+    )
     print(mensagem if ok else f"Erro: {mensagem}")
 
 
@@ -112,7 +115,7 @@ def tela_resumo_energetico(usuario_logado):
     if imovel_escolhido is None:
         return
 
-    historico = consumo.listar_consumos_imovel(imovel_escolhido["id"])
+    historico = consumo.listar_consumos_imovel(usuario_logado["id"], imovel_escolhido["id"])
 
     print(f"\nHistórico de {imovel_escolhido['nome']}:")
     for item in historico:
