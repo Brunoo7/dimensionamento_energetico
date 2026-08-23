@@ -23,4 +23,48 @@ def cadastrar_imovel(usuario_id, nome, endereco=""):
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute(
-        "INSERT INTO imoveis (usuario_id, nome,
+        "INSERT INTO imoveis (usuario_id, nome, endereco) VALUES (?, ?, ?)",
+        (usuario_id, nome.strip(), (endereco or "").strip()),
+    )
+    conexao.commit()
+    novo_id = cursor.lastrowid
+    conexao.close()
+    return True, novo_id
+
+
+def listar_imoveis_usuario(usuario_id):
+    """Retorna todos os imóveis cadastrados pelo usuário logado."""
+    conexao = conectar()
+    cursor = conexao.cursor()
+    cursor.execute(
+        "SELECT id, nome, endereco FROM imoveis WHERE usuario_id = ? ORDER BY nome",
+        (usuario_id,),
+    )
+    resultado = cursor.fetchall()
+    conexao.close()
+
+    return [{"id": r[0], "nome": r[1], "endereco": r[2]} for r in resultado]
+
+
+def buscar_imovel_por_id(imovel_id):
+    """Retorna os dados do imóvel (incluindo o usuario_id dono) ou None se não existir."""
+    conexao = conectar()
+    cursor = conexao.cursor()
+    cursor.execute(
+        "SELECT id, usuario_id, nome, endereco FROM imoveis WHERE id = ?",
+        (imovel_id,),
+    )
+    resultado = cursor.fetchone()
+    conexao.close()
+
+    if resultado is None:
+        return None
+    return {"id": resultado[0], "usuario_id": resultado[1], "nome": resultado[2], "endereco": resultado[3]}
+
+
+def imovel_pertence_ao_usuario(imovel_id, usuario_id):
+    """PB15 - Confirma se o imóvel pertence ao usuário informado.
+    Usado como checagem de segurança antes de ler/gravar consumo de um imóvel.
+    """
+    imovel_encontrado = buscar_imovel_por_id(imovel_id)
+    return imovel_encontrado is not None and imovel_encontrado["usuario_id"] == usuario_id
