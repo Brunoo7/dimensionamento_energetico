@@ -28,8 +28,14 @@ def configurar_strings(modulo, inversor, n_modulos):
         Voc_frio  = n_série × Voc × FATOR_VOC_FRIO  ≤ tensão máxima de entrada
         Vmp_quente = n_série × Vmp × FATOR_VMP_QUENTE ≥ início da faixa MPPT
         Vmp (STC)  = n_série × Vmp                   ≤ fim da faixa MPPT
-        Isc × strings_em_paralelo_por_MPPT           ≤ corrente máxima de entrada
+        Imp × strings_em_paralelo_por_MPPT           ≤ corrente máxima de entrada (por MPPT)
+        Isc × strings_em_paralelo_por_MPPT           ≤ corrente máxima de curto-circuito (por MPPT),
+                                                       só se o dataset informar essa coluna opcional
     (strings distribuídas igualmente entre os MPPTs).
+
+    A "corrente máxima de entrada" dos datasheets é a corrente de OPERAÇÃO, por isso
+    é comparada com a Imp. A Isc só é comparada com o limite de curto-circuito do
+    inversor, que costuma ser maior e vem em outra linha do datasheet.
 
     Retorna (True, configuração) ou (False, lista_de_motivos).
     """
@@ -40,7 +46,9 @@ def configurar_strings(modulo, inversor, n_modulos):
         vmp_quente = n_serie * modulo["vmp_v"] * parametros.FATOR_VMP_QUENTE
         vmp_stc = n_serie * modulo["vmp_v"]
         paralelos = math.ceil(n_strings / inversor["numero_mppt"])
-        corrente = modulo["isc_a"] * paralelos
+        corrente = modulo["imp_a"] * paralelos
+        corrente_curto = modulo["isc_a"] * paralelos
+        limite_curto = inversor.get("corrente_max_curto_circuito_a")
 
         problemas = []
         if voc_frio > inversor["tensao_max_entrada_v"]:
@@ -59,6 +67,10 @@ def configurar_strings(modulo, inversor, n_modulos):
             problemas.append(
                 f"{n_serie} em série: corrente {corrente:.1f} A acima do máximo "
                 f"do inversor ({inversor['corrente_max_entrada_a']:.1f} A)")
+        if limite_curto is not None and corrente_curto > limite_curto:
+            problemas.append(
+                f"{n_serie} em série: corrente de curto-circuito {corrente_curto:.1f} A acima do "
+                f"limite do inversor ({limite_curto:.1f} A)")
 
         if not problemas:
             return True, {

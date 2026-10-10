@@ -44,8 +44,9 @@ ESQUEMAS = {
                     "tensao_max_entrada_v", "faixa_mppt_min_v", "faixa_mppt_max_v",
                     "corrente_max_entrada_a", "numero_mppt", "compativel_bateria",
                     "preco_brl", "fornecedor", "data_coleta", "url_fonte"],
-        # Colunas OPCIONAIS (se existirem e estiverem preenchidas, a tensão da bateria é validada):
-        "opcionais_numericos": ["tensao_bateria_min_v", "tensao_bateria_max_v"],
+        # Colunas OPCIONAIS: tensão da bateria (validada se preenchida) e corrente máxima de curto-circuito (Isc):
+        "opcionais_numericos": ["tensao_bateria_min_v", "tensao_bateria_max_v",
+                                "corrente_max_curto_circuito_a"],
     },
     "baterias": {
         "arquivo": "baterias.csv",

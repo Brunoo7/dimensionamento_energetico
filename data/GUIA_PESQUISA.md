@@ -19,10 +19,10 @@ sem conferir na fonte: cada linha precisa de `fornecedor` brasileiro, `data_cole
 
 **Inversor** (`inversores.csv`): `potencia_nominal_w` = rated AC output power; `potencia_max_fv_w` = max. PV input power
 (ou recomendada); `tensao_max_entrada_v` = max. DC input voltage; `faixa_mppt_min_v` e `faixa_mppt_max_v` = MPPT voltage range;
-`corrente_max_entrada_a` = max. input current **por MPPT**; `numero_mppt` = number of MPPT; `tipo` = `string` ou `hibrido`;
+`corrente_max_entrada_a` = max. input current **por MPPT** (corrente de operação, comparada com a Imp do módulo); coluna opcional `corrente_max_curto_circuito_a` = max. short-circuit current por MPPT (comparada com a Isc), quando o datasheet informar; `numero_mppt` = number of MPPT; `tipo` = `string` ou `hibrido`;
 `compativel_bateria` = `sim` só se o fabricante diz que aceita bateria. Para híbridos, preencha também
 `tensao_bateria_min_v` e `tensao_bateria_max_v` (battery voltage range), pois assim a compatibilidade de tensão é verificada.
-Atenção: o sistema trata a corrente máxima como valor por MPPT. Se o datasheet dá outro tipo de limite, anote na fonte.
+Atenção: o sistema trata as correntes como valores por MPPT. Se o datasheet dá o limite de outra forma, anote na fonte.
 
 **Bateria** (`baterias.csv`): `tensao_nominal_v` = nominal voltage; `capacidade_ah` = nominal capacity;
 `capacidade_kwh` = **nominal** energy (não a energia útil); `dod_pct` = depth of discharge (0 a 100); `ciclos` = cycle life.

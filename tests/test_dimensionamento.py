@@ -58,6 +58,21 @@ class TesteStrings(unittest.TestCase):
         self.assertFalse(ok)
         self.assertTrue(any("corrente" in m for m in motivos))
 
+    def test_corrente_de_operacao_usa_imp_e_nao_isc(self):
+        # Imp = 13,3 A passa num limite de 14 A, embora Isc = 14,0 A esteja no limite
+        inv = {**INV_STRING, "corrente_max_entrada_a": 14.0}
+        ok, _ = selecao.configurar_strings(MODULO, inv, 7)
+        self.assertTrue(ok)
+
+    def test_limite_opcional_de_curto_circuito_e_verificado(self):
+        inv = {**INV_STRING, "corrente_max_curto_circuito_a": 12.0}   # Isc = 14 A passa do limite
+        ok, motivos = selecao.configurar_strings(MODULO, inv, 7)
+        self.assertFalse(ok)
+        self.assertTrue(any("curto-circuito" in m for m in motivos))
+        inv = {**INV_STRING, "corrente_max_curto_circuito_a": 20.0}
+        ok, _ = selecao.configurar_strings(MODULO, inv, 7)
+        self.assertTrue(ok)
+
     def test_divide_em_strings_quando_nao_cabe_tudo_em_serie(self):
         inv = {**INV_STRING, "tensao_max_entrada_v": 300.0, "faixa_mppt_min_v": 60.0}
         ok, cfg = selecao.configurar_strings(MODULO, inv, 8)   # 4 em série × 2 strings
@@ -206,12 +221,14 @@ class TesteInversorComColunasOpcionais(unittest.TestCase):
         regs, erros = self._carregar(self.CAB, "I1,F,M,hibrido,3000,4500,600,80,550,16,2,sim,5000,L,2026-01-01,https://x.test")
         self.assertEqual(erros, [])
         self.assertIsNone(regs[0]["tensao_bateria_min_v"])
+        self.assertIsNone(regs[0]["corrente_max_curto_circuito_a"])
 
     def test_com_colunas_opcionais(self):
-        regs, erros = self._carregar(self.CAB + ",tensao_bateria_min_v,tensao_bateria_max_v",
-                                     "I1,F,M,hibrido,3000,4500,600,80,550,16,2,sim,5000,L,2026-01-01,https://x.test,40,60")
+        regs, erros = self._carregar(self.CAB + ",tensao_bateria_min_v,tensao_bateria_max_v,corrente_max_curto_circuito_a",
+                                     "I1,F,M,hibrido,3000,4500,600,80,550,16,2,sim,5000,L,2026-01-01,https://x.test,40,60,20")
         self.assertEqual(erros, [])
         self.assertEqual((regs[0]["tensao_bateria_min_v"], regs[0]["tensao_bateria_max_v"]), (40.0, 60.0))
+        self.assertEqual(regs[0]["corrente_max_curto_circuito_a"], 20.0)
 
     def test_so_uma_das_duas_e_erro(self):
         regs, erros = self._carregar(self.CAB + ",tensao_bateria_min_v,tensao_bateria_max_v",
