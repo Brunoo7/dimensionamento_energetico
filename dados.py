@@ -2,12 +2,16 @@
 dados.py
 
 Responsável por toda a conexão com o banco de dados SQLite e pela
-criação das tabelas usadas pelo sistema.
+criação/migração das tabelas usadas pelo sistema.
 
 Tabelas:
     usuarios  -> PB01 (cadastro de usuário)
     imoveis   -> PB03 (cadastro de imóvel), associado a um usuário
+                 PB18 (cidade e UF, usadas para buscar o HSP)
     consumos  -> PB05 / PB06 (histórico de consumo mensal), associado a um imóvel
+
+Bancos criados antes da Sprint FV não têm as colunas cidade/uf em "imoveis";
+criar_tabelas() adiciona essas colunas sem apagar nenhum dado.
 """
 
 import sqlite3
@@ -22,8 +26,22 @@ def conectar():
     return conexao
 
 
+def _colunas_da_tabela(cursor, tabela):
+    cursor.execute(f"PRAGMA table_info({tabela})")
+    return [linha[1] for linha in cursor.fetchall()]
+
+
+def _migrar_imoveis(cursor):
+    """PB18 - Adiciona cidade e uf em bancos criados antes da Sprint FV."""
+    colunas = _colunas_da_tabela(cursor, "imoveis")
+    if "cidade" not in colunas:
+        cursor.execute("ALTER TABLE imoveis ADD COLUMN cidade TEXT")
+    if "uf" not in colunas:
+        cursor.execute("ALTER TABLE imoveis ADD COLUMN uf TEXT")
+
+
 def criar_tabelas():
-    """Cria as tabelas do sistema caso ainda não existam."""
+    """Cria as tabelas do sistema caso ainda não existam e aplica migrações."""
     conexao = conectar()
     cursor = conexao.cursor()
 
@@ -43,6 +61,8 @@ def criar_tabelas():
             nome TEXT NOT NULL,
             endereco TEXT,
             tipo TEXT NOT NULL DEFAULT 'Não informado',
+            cidade TEXT,
+            uf TEXT,
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
         )
     """)
@@ -58,6 +78,8 @@ def criar_tabelas():
             UNIQUE (imovel_id, mes, ano)
         )
     """)
+
+    _migrar_imoveis(cursor)
 
     conexao.commit()
     conexao.close()
