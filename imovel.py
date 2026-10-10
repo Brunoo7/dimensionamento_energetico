@@ -2,6 +2,7 @@
 imovel.py
 
 Cadastro de imóvel (PB03), sempre associado a um usuário já autenticado.
+PB04 - editar e excluir imóvel.
 PB18 - o imóvel agora tem cidade e UF (necessárias para buscar o HSP).
 """
 
@@ -116,3 +117,48 @@ def atualizar_localizacao(usuario_id, imovel_id, cidade, uf):
     conexao.commit()
     conexao.close()
     return True, "Localização atualizada."
+
+
+
+def editar_imovel(usuario_id, imovel_id, nome, tipo, cidade, uf, endereco=""):
+    """PB04 - Altera os dados de um imóvel (somente se for do usuário - PB15)."""
+    if not imovel_pertence_ao_usuario(imovel_id, usuario_id):
+        return False, "Imóvel não encontrado ou não pertence a este usuário."
+
+    valido, mensagem = validar_dados_imovel(nome, tipo, cidade, uf)
+    if not valido:
+        return False, mensagem
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+    cursor.execute(
+        "UPDATE imoveis SET nome = ?, tipo = ?, cidade = ?, uf = ?, endereco = ? "
+        "WHERE id = ? AND usuario_id = ?",
+        (nome.strip(), tipo.strip(), cidade.strip(), uf.strip().upper(),
+         (endereco or "").strip(), imovel_id, usuario_id),
+    )
+    conexao.commit()
+    conexao.close()
+    return True, "Imóvel atualizado."
+
+
+def excluir_imovel(usuario_id, imovel_id):
+    """PB04 - Exclui o imóvel e tudo que depende dele (consumos e propostas).
+    A confirmação com o usuário é feita na tela (main.py) antes de chamar esta função.
+    """
+    if not imovel_pertence_ao_usuario(imovel_id, usuario_id):
+        return False, "Imóvel não encontrado ou não pertence a este usuário."
+
+    conexao = conectar()
+    try:
+        cursor = conexao.cursor()
+        cursor.execute("DELETE FROM propostas WHERE imovel_id = ?", (imovel_id,))
+        cursor.execute("DELETE FROM consumos WHERE imovel_id = ?", (imovel_id,))
+        cursor.execute("DELETE FROM imoveis WHERE id = ? AND usuario_id = ?", (imovel_id, usuario_id))
+        conexao.commit()
+    except Exception:
+        conexao.rollback()
+        raise
+    finally:
+        conexao.close()
+    return True, "Imóvel excluído."

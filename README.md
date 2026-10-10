@@ -10,7 +10,7 @@ gera uma **proposta preliminar de sistema fotovoltaico** com estimativa de orça
 
 ## Como executar
 
-Requer apenas Python 3 (biblioteca padrão).
+Requer Python 3. O sistema usa só a biblioteca padrão; o `matplotlib` é opcional e serve apenas para salvar o gráfico em PNG (`pip install matplotlib`).
 
 ```
 python main.py                                  # menu do sistema
@@ -32,7 +32,8 @@ inversor e strings → baterias (opcional) → orçamento → proposta (salva no
 | Arquivo | Função |
 |---|---|
 | `main.py` | menu de linha de comando |
-| `usuario.py`, `imovel.py`, `consumo.py` | cadastro de usuário, imóvel (com cidade/UF) e consumo |
+| `usuario.py`, `imovel.py`, `consumo.py` | cadastro/login (senha com PBKDF2 + sal), imóvel (cidade/UF, editar e excluir) e consumo |
+| `grafico.py` | gráfico do histórico de consumo (texto no terminal e PNG com matplotlib) |
 | `dados.py` | SQLite: criação e migração das tabelas |
 | `calculos.py` | fórmulas (consumo de referência, P_FV, módulos, geração, baterias) |
 | `parametros.py` | valores padrão, limites e validações |
@@ -91,4 +92,5 @@ cabos, proteções e instalação, cada item com a fonte da premissa.
 
 - Sem coeficientes de temperatura reais, a validação de tensão usa fatores de margem.
 - Não considera sombreamento, orientação, inclinação nem perdas específicas do local.
-- PB04 (editar/excluir imóvel) e PB12 (gráfico do histórico) ainda não foram implementados.
+- O gráfico em PNG exige `matplotlib`; sem ele o gráfico em texto continua funcionando.
+- A senha mínima passou a ter 8 caracteres (contas antigas continuam entrando e são atualizadas para o hash seguro no primeiro login).

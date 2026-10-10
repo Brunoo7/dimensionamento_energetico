@@ -22,6 +22,12 @@ Sprint FV (parte 1):
     PB26 - Módulos e potência instalada (quando data/modulos.csv tiver dados)
     PB27 - Geração mensal estimada
 
+Pendências da Sprint 1 concluídas:
+    PB04 - Editar e excluir imóvel (com confirmação)
+    PB07 - Histórico em ordem cronológica (na tela de resumo)
+    PB10 - Mês do maior consumo destacado
+    PB12 - Gráfico do histórico (texto no terminal e PNG opcional)
+
 Sprint FV (parte 2):
     PB28/PB29 - Inversor e validação das strings
     PB30/PB31 - Baterias opcionais
@@ -40,6 +46,7 @@ import equipamentos
 import orcamento
 import dimensionamento
 import proposta
+import grafico
 
 
 def ler_inteiro(mensagem):
@@ -157,14 +164,54 @@ def tela_resumo_energetico(usuario_logado):
 
     historico = consumo.listar_consumos_imovel(usuario_logado["id"], imovel_escolhido["id"])
 
+    resumo = calculos.calcular_resumo(historico)
+    maior = resumo["consumo_maximo_kwh"] if resumo else None
+
     print(f"\nHistórico de {imovel_escolhido['nome']}:")
     for item in historico:
         mes_nome = consumo.nome_do_mes(item["mes"])
-        print(f"  {mes_nome}/{item['ano']}: {item['consumo_kwh']:.2f} kWh")
+        marca = "  <- maior consumo" if item["consumo_kwh"] == maior else ""
+        print(f"  {mes_nome}/{item['ano']}: {item['consumo_kwh']:.2f} kWh{marca}")
 
-    resumo = calculos.calcular_resumo(historico)
     print()
     print(calculos.formatar_resumo(resumo))
+
+    if historico:
+        print()
+        print(grafico.gerar_grafico_texto(historico))
+        if ler_sim_nao("\nSalvar o gráfico como imagem PNG? (s/n): "):
+            ok, retorno = grafico.salvar_grafico_png(historico, "grafico_consumo.png")
+            print(f"Gráfico salvo em {retorno}" if ok else f"Erro: {retorno}")
+
+
+def tela_editar_excluir_imovel(usuario_logado):
+    print("\n--- Editar ou excluir imóvel ---")
+    imovel_escolhido = escolher_imovel(usuario_logado)
+    if imovel_escolhido is None:
+        return
+
+    print("1 - Editar  2 - Excluir  3 - Voltar")
+    opcao = input("Escolha: ").strip()
+
+    if opcao == "1":
+        print("(Deixe em branco para manter o valor atual.)")
+        nome = input(f"Nome [{imovel_escolhido['nome']}]: ").strip() or imovel_escolhido["nome"]
+        print(f"Tipos sugeridos: {', '.join(imovel.TIPOS_VALIDOS)}")
+        tipo = input(f"Tipo [{imovel_escolhido['tipo']}]: ").strip() or imovel_escolhido["tipo"]
+        cidade = input(f"Cidade [{imovel_escolhido['cidade'] or ''}]: ").strip() or (imovel_escolhido["cidade"] or "")
+        uf = input(f"UF [{imovel_escolhido['uf'] or ''}]: ").strip() or (imovel_escolhido["uf"] or "")
+        endereco = input(f"Endereço [{imovel_escolhido['endereco'] or ''}]: ").strip() or (imovel_escolhido["endereco"] or "")
+        ok, mensagem = imovel.editar_imovel(usuario_logado["id"], imovel_escolhido["id"], nome, tipo, cidade, uf, endereco)
+        print(mensagem if ok else f"Erro: {mensagem}")
+
+    elif opcao == "2":
+        print(f"Atenção: excluir '{imovel_escolhido['nome']}' apaga também todo o histórico de "
+              "consumo e as propostas salvas desse imóvel.")
+        if input("Digite EXCLUIR para confirmar: ").strip() == "EXCLUIR":
+            ok, mensagem = imovel.excluir_imovel(usuario_logado["id"], imovel_escolhido["id"])
+            print(mensagem if ok else f"Erro: {mensagem}")
+        else:
+            print("Exclusão cancelada.")
 
 
 def garantir_localizacao(usuario_logado, imovel_escolhido):
@@ -312,24 +359,27 @@ def menu_logado(usuario_logado):
     while True:
         print(f"\n===== Menu ({usuario_logado['nome']}) =====")
         print("1 - Cadastrar imóvel")
-        print("2 - Informar consumo mensal")
-        print("3 - Ver resumo energético (maior consumo, média)")
-        print("4 - Pré-dimensionamento fotovoltaico")
-        print("5 - Minhas propostas salvas")
-        print("6 - Sair do usuário (logout)")
+        print("2 - Editar ou excluir imóvel")
+        print("3 - Informar consumo mensal")
+        print("4 - Ver resumo energético e gráfico")
+        print("5 - Pré-dimensionamento fotovoltaico")
+        print("6 - Minhas propostas salvas")
+        print("7 - Sair do usuário (logout)")
         opcao = input("Escolha uma opção: ").strip()
 
         if opcao == "1":
             tela_cadastro_imovel(usuario_logado)
         elif opcao == "2":
-            tela_informar_consumo(usuario_logado)
+            tela_editar_excluir_imovel(usuario_logado)
         elif opcao == "3":
-            tela_resumo_energetico(usuario_logado)
+            tela_informar_consumo(usuario_logado)
         elif opcao == "4":
-            tela_dimensionamento_fv(usuario_logado)
+            tela_resumo_energetico(usuario_logado)
         elif opcao == "5":
-            tela_minhas_propostas(usuario_logado)
+            tela_dimensionamento_fv(usuario_logado)
         elif opcao == "6":
+            tela_minhas_propostas(usuario_logado)
+        elif opcao == "7":
             break
         else:
             print("Opção inválida.")

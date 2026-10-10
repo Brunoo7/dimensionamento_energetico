@@ -2,18 +2,53 @@
 usuario.py
 
 Cadastro (PB01) e login (PB02) de usuários.
-A senha nunca é gravada em texto puro: é armazenada como hash SHA-256.
+
+Segurança da senha: a senha nunca é gravada em texto puro. Ela é armazenada com
+PBKDF2-HMAC-SHA256, um "sal" aleatório por usuário e muitas iterações, no formato:
+
+    pbkdf2_sha256$<iterações>$<sal em hex>$<hash em hex>
+
+Contas criadas antes desta versão usam SHA-256 simples (64 caracteres hex, sem sal).
+Elas continuam funcionando e são atualizadas para o formato novo no primeiro login.
 """
 
 import hashlib
+import hmac
+import os
 import re
+import sqlite3
+
 from dados import conectar
 
 REGEX_EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
+ALGORITMO = "pbkdf2_sha256"
+ITERACOES = 200_000
+TAMANHO_MINIMO_SENHA = 8
 
-def _hash_senha(senha):
+
+def _hash_legado(senha):
+    """Formato antigo (SHA-256 sem sal). Mantido só para contas antigas."""
     return hashlib.sha256(senha.encode("utf-8")).hexdigest()
+
+
+def _hash_senha(senha, sal=None, iteracoes=ITERACOES):
+    """Gera o hash seguro (PBKDF2 + sal aleatório)."""
+    sal = sal if sal is not None else os.urandom(16)
+    derivado = hashlib.pbkdf2_hmac("sha256", senha.encode("utf-8"), sal, iteracoes)
+    return f"{ALGORITMO}${iteracoes}${sal.hex()}${derivado.hex()}"
+
+
+def _verificar_senha(senha, armazenado):
+    """Confere a senha contra o hash armazenado (novo ou legado) sem vazar tempo de comparação."""
+    if armazenado.startswith(ALGORITMO + "$"):
+        try:
+            _, iteracoes, sal_hex, hash_hex = armazenado.split("$")
+            esperado = _hash_senha(senha, bytes.fromhex(sal_hex), int(iteracoes))
+        except ValueError:
+            return False
+        return hmac.compare_digest(esperado, armazenado)
+    return hmac.compare_digest(_hash_legado(senha), armazenado)
 
 
 def validar_dados_usuario(nome, email, senha):
@@ -24,13 +59,13 @@ def validar_dados_usuario(nome, email, senha):
         return False, "O nome não pode ficar em branco."
     if not email or not REGEX_EMAIL.match(email.strip()):
         return False, "Informe um e-mail válido."
-    if not senha or len(senha) < 4:
-        return False, "A senha deve ter pelo menos 4 caracteres."
+    if not senha or len(senha) < TAMANHO_MINIMO_SENHA:
+        return False, f"A senha deve ter pelo menos {TAMANHO_MINIMO_SENHA} caracteres."
     return True, ""
 
 
 def cadastrar_usuario(nome, email, senha):
-    """Cadastra um novo usuário. Retorna (True, id_ou_mensagem)."""
+    """Cadastra um novo usuário. Retorna (True, id) ou (False, mensagem)."""
     valido, mensagem = validar_dados_usuario(nome, email, senha)
     if not valido:
         return False, mensagem
@@ -43,9 +78,8 @@ def cadastrar_usuario(nome, email, senha):
             (nome.strip(), email.strip().lower(), _hash_senha(senha)),
         )
         conexao.commit()
-        novo_id = cursor.lastrowid
-        return True, novo_id
-    except Exception:
+        return True, cursor.lastrowid
+    except sqlite3.IntegrityError:
         return False, "Já existe um usuário cadastrado com esse e-mail."
     finally:
         conexao.close()
@@ -59,14 +93,19 @@ def login(email, senha):
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute(
-        "SELECT id, nome, email FROM usuarios WHERE email = ? AND senha_hash = ?",
-        (email.strip().lower(), _hash_senha(senha)),
+        "SELECT id, nome, email, senha_hash FROM usuarios WHERE email = ?",
+        (email.strip().lower(),),
     )
     resultado = cursor.fetchone()
-    conexao.close()
 
-    if resultado is None:
+    if resultado is None or not _verificar_senha(senha, resultado[3]):
+        conexao.close()
         return False, "E-mail ou senha incorretos."
 
-    usuario = {"id": resultado[0], "nome": resultado[1], "email": resultado[2]}
-    return True, usuario
+    # Atualiza contas antigas (SHA-256 sem sal) para o formato seguro.
+    if not resultado[3].startswith(ALGORITMO + "$"):
+        cursor.execute("UPDATE usuarios SET senha_hash = ? WHERE id = ?", (_hash_senha(senha), resultado[0]))
+        conexao.commit()
+    conexao.close()
+
+    return True, {"id": resultado[0], "nome": resultado[1], "email": resultado[2]}
