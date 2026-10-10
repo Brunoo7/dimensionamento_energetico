@@ -16,6 +16,14 @@ FRACAO_MAX = 1.0              # 100 %
 AUTONOMIA_MAX_H = 48          # horas
 MESES_RECOMENDADOS = 12       # meses de histórico recomendados (PB16)
 
+# Validação elétrica módulos-inversor (PB28 / PB29)
+# ATENÇÃO: sem o coeficiente de temperatura do datasheet, usamos fatores de margem.
+# São PREMISSAS (valores típicos) a documentar ou substituir pelos coeficientes reais.
+FATOR_VOC_FRIO = 1.12         # Voc aumenta no frio: Voc_frio = Voc × fator
+FATOR_VMP_QUENTE = 0.85       # Vmp cai no calor: Vmp_quente = Vmp × fator
+RAZAO_FV_CA_MIN = 0.8         # P_instalada / P_nominal do inversor (mínimo aceito)
+RAZAO_FV_CA_MAX = 1.5         # idem (máximo aceito)
+
 # Parâmetros de bateria (valores padrão usados quando o dataset não informa)
 DOD_PADRAO = 0.90
 ETA_BATERIA_PADRAO = 0.95

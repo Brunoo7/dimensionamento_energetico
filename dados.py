@@ -9,6 +9,7 @@ Tabelas:
     imoveis   -> PB03 (cadastro de imóvel), associado a um usuário
                  PB18 (cidade e UF, usadas para buscar o HSP)
     consumos  -> PB05 / PB06 (histórico de consumo mensal), associado a um imóvel
+    propostas -> PB35 (propostas FV salvas, com "foto" dos valores usados)
 
 Bancos criados antes da Sprint FV não têm as colunas cidade/uf em "imoveis";
 criar_tabelas() adiciona essas colunas sem apagar nenhum dado.
@@ -76,6 +77,18 @@ def criar_tabelas():
             consumo_kwh REAL NOT NULL,
             FOREIGN KEY (imovel_id) REFERENCES imoveis (id),
             UNIQUE (imovel_id, mes, ano)
+        )
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS propostas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
+            imovel_id INTEGER NOT NULL,
+            criada_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            dados_json TEXT NOT NULL,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios (id),
+            FOREIGN KEY (imovel_id) REFERENCES imoveis (id)
         )
     """)
 

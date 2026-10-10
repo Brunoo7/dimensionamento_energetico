@@ -44,6 +44,8 @@ ESQUEMAS = {
                     "tensao_max_entrada_v", "faixa_mppt_min_v", "faixa_mppt_max_v",
                     "corrente_max_entrada_a", "numero_mppt", "compativel_bateria",
                     "preco_brl", "fornecedor", "data_coleta", "url_fonte"],
+        # Colunas OPCIONAIS (se existirem e estiverem preenchidas, a tensão da bateria é validada):
+        "opcionais_numericos": ["tensao_bateria_min_v", "tensao_bateria_max_v"],
     },
     "baterias": {
         "arquivo": "baterias.csv",
@@ -80,6 +82,11 @@ def _validar_regras_especificas(tipo, registro):
             erros.append("faixa_mppt_min_v deve ser menor que faixa_mppt_max_v.")
         if registro["potencia_nominal_w"] <= 0 or registro["numero_mppt"] < 1:
             erros.append("potencia_nominal_w e numero_mppt devem ser positivos.")
+        t_min, t_max = registro.get("tensao_bateria_min_v"), registro.get("tensao_bateria_max_v")
+        if (t_min is None) != (t_max is None):
+            erros.append("preencha tensao_bateria_min_v e tensao_bateria_max_v juntas (ou deixe as duas vazias).")
+        elif t_min is not None and t_min >= t_max:
+            erros.append("tensao_bateria_min_v deve ser menor que tensao_bateria_max_v.")
     elif tipo == "baterias":
         if not (0 < registro["dod_pct"] <= 100):
             erros.append("dod_pct deve estar entre 0 e 100.")
@@ -125,6 +132,16 @@ def carregar_dataset(tipo, pasta=PASTA_DADOS):
                     registro[campo] = float(linha[campo])
                 except (TypeError, ValueError):
                     problemas.append(f"campo '{campo}' não é numérico (use ponto decimal, sem unidade).")
+
+            for campo in esquema.get("opcionais_numericos", []):
+                bruto = (linha.get(campo) or "").strip()
+                if bruto == "":
+                    registro[campo] = None
+                else:
+                    try:
+                        registro[campo] = float(bruto)
+                    except ValueError:
+                        problemas.append(f"campo '{campo}' não é numérico (use ponto decimal, sem unidade).")
 
             if not problemas:
                 problemas += _validar_regras_especificas(tipo, registro)

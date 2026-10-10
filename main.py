@@ -21,6 +21,12 @@ Sprint FV (parte 1):
     PB25 - Potência FV necessária
     PB26 - Módulos e potência instalada (quando data/modulos.csv tiver dados)
     PB27 - Geração mensal estimada
+
+Sprint FV (parte 2):
+    PB28/PB29 - Inversor e validação das strings
+    PB30/PB31 - Baterias opcionais
+    PB32/PB33 - Orçamento
+    PB34/PB35 - Proposta preliminar (salvar e consultar)
 """
 
 from dados import criar_tabelas
@@ -31,6 +37,9 @@ import calculos
 import parametros
 import solar
 import equipamentos
+import orcamento
+import dimensionamento
+import proposta
 
 
 def ler_inteiro(mensagem):
@@ -189,6 +198,16 @@ def obter_hsp(imovel_escolhido):
         print(f"Erro: {mensagem}")
 
 
+def ler_sim_nao(mensagem):
+    while True:
+        resposta = input(mensagem).strip().lower()
+        if resposta in ("s", "sim"):
+            return True
+        if resposta in ("n", "nao", "não"):
+            return False
+        print("Responda com s ou n.")
+
+
 def tela_dimensionamento_fv(usuario_logado):
     print("\n--- Pré-dimensionamento fotovoltaico ---")
     imovel_escolhido = escolher_imovel(usuario_logado)
@@ -211,7 +230,6 @@ def tela_dimensionamento_fv(usuario_logado):
         return
     if ref["aviso"]:
         print(f"Aviso: {ref['aviso']}")
-    consumo_ref = ref["valor_kwh"]
 
     # PB19 - recurso solar
     hsp, fonte_hsp = obter_hsp(imovel_escolhido)
@@ -223,7 +241,6 @@ def tela_dimensionamento_fv(usuario_logado):
         if ok:
             break
         print(f"Erro: {mensagem}")
-    fracao = percentual / 100
 
     while True:
         eta = ler_numero_com_padrao(f"Fator de desempenho η (Enter = {parametros.ETA_PADRAO}): ", parametros.ETA_PADRAO)
@@ -232,36 +249,63 @@ def tela_dimensionamento_fv(usuario_logado):
             break
         print(f"Erro: {mensagem}")
 
-    # PB25 - cálculo da geração necessária
-    energia_fv = calculos.energia_fv_mensal(consumo_ref, fracao)
-    p_fv = calculos.potencia_fv_kwp(energia_fv, hsp, eta)
+    com_bateria = ler_sim_nao("Deseja incluir armazenamento por baterias? (s/n): ")
+    autonomia = None
+    if com_bateria:
+        while True:
+            autonomia = ler_numero("Autonomia desejada em horas: ")
+            ok, mensagem = parametros.validar_autonomia(autonomia)
+            if ok:
+                break
+            print(f"Erro: {mensagem}")
 
-    print("\n===== PRÉ-DIMENSIONAMENTO FV =====")
-    print(f"Imóvel: {imovel_escolhido['nome']} ({imovel_escolhido['cidade']}/{imovel_escolhido['uf']})")
-    print(f"Consumo de referência ({'média' if criterio == 'media' else 'máximo'}): {consumo_ref:.2f} kWh/mês")
-    print(f"Percentual de atendimento: {percentual:.0f}%")
-    print(f"Energia mensal a gerar: {energia_fv:.2f} kWh/mês")
-    print(f"HSP: {hsp:.2f} kWh/m²/dia (fonte: {fonte_hsp})")
-    print(f"η: {eta:.2f}  |  dias considerados: {parametros.DIAS_MES}")
-    print(f"Potência FV necessária: {p_fv:.3f} kWp")
-
-    # PB26 / PB27 - módulos (só se o dataset tiver dados válidos)
-    modulos, erros = equipamentos.carregar_modulos()
-    for erro in erros:
+    # Datasets
+    modulos, e1 = equipamentos.carregar_modulos()
+    inversores, e2 = equipamentos.carregar_inversores()
+    baterias, e3 = equipamentos.carregar_baterias()
+    outros, e4 = orcamento.carregar_outros_custos()
+    for erro in e1 + e2 + e3 + e4:
         print(f"Aviso (dataset): {erro}")
-    modulo = equipamentos.selecionar_modulo_mais_barato(modulos)
-    if modulo is None:
-        print("\nmodulos.csv ainda não tem módulos válidos; a seleção de módulos fica para quando o dataset estiver preenchido.")
-    else:
-        n = calculos.quantidade_modulos(p_fv, modulo["potencia_wp"])
-        p_inst = calculos.potencia_instalada_kwp(n, modulo["potencia_wp"])
-        geracao = calculos.geracao_mensal_kwh(p_inst, hsp, eta)
-        print(f"\nMódulo selecionado (menor R$/Wp): {modulo['fabricante']} {modulo['modelo']} ({modulo['potencia_wp']:.0f} Wp)")
-        print(f"Quantidade de módulos: {n}")
-        print(f"Potência instalada: {p_inst:.3f} kWp")
-        print(f"Geração mensal estimada: {geracao:.1f} kWh/mês ({geracao / consumo_ref * 100:.1f}% do consumo de referência)")
 
-    print("\nPré-dimensionamento acadêmico: não substitui projeto elétrico executivo nem análise de profissional habilitado.")
+    ok, resultado = dimensionamento.dimensionar(
+        ref["valor_kwh"], hsp, percentual / 100, eta, modulos, inversores,
+        baterias=baterias, outros_custos=outros, com_bateria=com_bateria, autonomia_h=autonomia)
+    if not ok:
+        print("\nNão foi possível montar a proposta:")
+        for mensagem in resultado:
+            print(f"  - {mensagem}")
+        return
+
+    dados_proposta = proposta.montar_proposta(
+        imovel_escolhido, criterio, ref["meses_analisados"], fonte_hsp, resultado)
+    print()
+    print(proposta.formatar_proposta(dados_proposta))
+
+    if ler_sim_nao("\nSalvar esta proposta? (s/n): "):
+        ok, retorno = proposta.salvar_proposta(usuario_logado["id"], imovel_escolhido["id"], dados_proposta)
+        print(f"Proposta salva (id {retorno})." if ok else f"Erro: {retorno}")
+
+
+def tela_minhas_propostas(usuario_logado):
+    print("\n--- Minhas propostas ---")
+    lista = proposta.listar_propostas(usuario_logado["id"])
+    if not lista:
+        print("Você ainda não salvou nenhuma proposta.")
+        return
+    for item in lista:
+        tipo = "com bateria" if item["com_bateria"] else "sem bateria"
+        print(f"  {item['id']} - {item['criada_em']} - {item['imovel_nome']} - "
+              f"{item['potencia_instalada_kwp']:.2f} kWp, {tipo}, "
+              f"{proposta.formatar_brl(item['custo_total'])}")
+    id_escolhido = ler_inteiro("Digite o id da proposta para abrir (0 para voltar): ")
+    if id_escolhido == 0:
+        return
+    dados_proposta = proposta.carregar_proposta(usuario_logado["id"], id_escolhido)
+    if dados_proposta is None:
+        print("Proposta não encontrada.")
+        return
+    print()
+    print(proposta.formatar_proposta(dados_proposta))
 
 
 def menu_logado(usuario_logado):
@@ -271,7 +315,8 @@ def menu_logado(usuario_logado):
         print("2 - Informar consumo mensal")
         print("3 - Ver resumo energético (maior consumo, média)")
         print("4 - Pré-dimensionamento fotovoltaico")
-        print("5 - Sair do usuário (logout)")
+        print("5 - Minhas propostas salvas")
+        print("6 - Sair do usuário (logout)")
         opcao = input("Escolha uma opção: ").strip()
 
         if opcao == "1":
@@ -283,6 +328,8 @@ def menu_logado(usuario_logado):
         elif opcao == "4":
             tela_dimensionamento_fv(usuario_logado)
         elif opcao == "5":
+            tela_minhas_propostas(usuario_logado)
+        elif opcao == "6":
             break
         else:
             print("Opção inválida.")
