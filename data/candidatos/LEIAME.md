@@ -17,7 +17,14 @@ Antes de copiar uma linha para `data/*.csv`:
 |---|---|---|
 | modulos.csv | 3 (Canadian Solar CS6W-550MS, Ronma RM-585W-182M/144TB, Osda ODA585-144MHD) | 10 |
 | inversores.csv | 3 (Growatt MIC3000TL-X; híbridos Deye SUN-5K-SG04LP1-EU e SUN-5K-SG02LP2-US-AM2) | 8 |
-| baterias.csv | 1 (Deye SE-G5.1 Pro-B) | 6 |
+| baterias.csv | 3 (Deye SE-G5.1 Pro-B, MUST LP16-48100, Livoltek BLF-B51100 em pré-venda) | 6 |
 
 Faltam também `hsp.csv` (consulta ao CRESESB/SunData, que é um formulário interativo) e `outros_custos.csv`.
 Com estes candidatos, os dois cenários (sem e com bateria) já rodam no sistema usando um HSP de exemplo.
+
+## Dica para completar a lista
+As páginas de produto da Minha Casa Solar (minhacasasolar.com.br) trazem ficha elétrica e preço na mesma página, e têm datasheet em PDF.
+Escolham os itens que faltam nestas categorias e repitam o método acima:
+painéis em /painel-solar/acima-de-370w, inversores string em /inversor/inversor-on-grid/inversor-string,
+híbridos em /inversor-hibrido e baterias em /baterias/bateria-estacionaria/bateria-solar/bateria-de-litio.
+Cuidado com lojas estrangeiras (preço em euro ou dólar) e com valores que diferem entre lojas: sempre confira o datasheet do fabricante.
