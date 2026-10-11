@@ -21,7 +21,7 @@ MESES_RECOMENDADOS = 12       # meses de histórico recomendados (PB16)
 # São PREMISSAS (valores típicos) a documentar ou substituir pelos coeficientes reais.
 FATOR_VOC_FRIO = 1.12         # Voc aumenta no frio: Voc_frio = Voc × fator
 FATOR_VMP_QUENTE = 0.85       # Vmp cai no calor: Vmp_quente = Vmp × fator
-RAZAO_FV_CA_MIN = 0.8         # P_instalada / P_nominal do inversor (mínimo aceito)
+RAZAO_FV_CA_MIN = 0.5         # P_instalada / P_nominal do inversor (mínimo aceito; inversor sobredimensionado só encarece)
 RAZAO_FV_CA_MAX = 1.5         # idem (máximo aceito)
 
 # Parâmetros de bateria (valores padrão usados quando o dataset não informa)

@@ -61,6 +61,8 @@ def formatar_proposta(p):
         f"(Voc a frio {st['voc_frio_v']:.0f} V, Vmp a quente {st['vmp_quente_v']:.0f} V)",
         f"Inversor: {inv['fabricante']} {inv['modelo']} ({inv['potencia_nominal_w']:.0f} W, tipo {inv['tipo']})",
     ]
+    for aviso in st.get("avisos", []):
+        linhas.append(f"  Aviso: {aviso}")
 
     if arm is None:
         linhas.append("Armazenamento: não (sistema sem baterias)")

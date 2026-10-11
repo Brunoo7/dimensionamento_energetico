@@ -73,6 +73,24 @@ class TesteStrings(unittest.TestCase):
         ok, _ = selecao.configurar_strings(MODULO, inv, 7)
         self.assertTrue(ok)
 
+    def test_imp_acima_do_limite_vira_aviso_quando_o_curto_circuito_e_conhecido(self):
+        # Imp = 13,3 A passa de 13,0 A, mas Isc = 14 A está dentro do limite de curto de 16 A
+        inv = {**INV_STRING, "corrente_max_entrada_a": 13.0, "corrente_max_curto_circuito_a": 16.0}
+        ok, cfg = selecao.configurar_strings(MODULO, inv, 7)
+        self.assertTrue(ok)
+        self.assertEqual(len(cfg["avisos"]), 1)
+        self.assertIn("limita a corrente", cfg["avisos"][0])
+
+    def test_imp_acima_do_limite_sem_dado_de_curto_circuito_reprova(self):
+        inv = {**INV_STRING, "corrente_max_entrada_a": 13.0}   # sem limite de curto-circuito no dataset
+        ok, motivos = selecao.configurar_strings(MODULO, inv, 7)
+        self.assertFalse(ok)
+
+    def test_sem_avisos_quando_tudo_cabe(self):
+        ok, cfg = selecao.configurar_strings(MODULO, INV_STRING, 7)
+        self.assertTrue(ok)
+        self.assertEqual(cfg["avisos"], [])
+
     def test_divide_em_strings_quando_nao_cabe_tudo_em_serie(self):
         inv = {**INV_STRING, "tensao_max_entrada_v": 300.0, "faixa_mppt_min_v": 60.0}
         ok, cfg = selecao.configurar_strings(MODULO, inv, 8)   # 4 em série × 2 strings
@@ -269,6 +287,14 @@ class TesteProposta(unittest.TestCase):
                        "7 × FabX Mod550", "Inversor:", "sem baterias", "Geração mensal estimada",
                        "Custo dos equipamentos", "Outros custos", "CUSTO TOTAL ESTIMADO", "R$ 7.235,00", "Não substitui projeto"):
             self.assertIn(trecho, texto)
+
+    def test_texto_mostra_aviso_de_corrente(self):
+        inv = {**INV_STRING, "corrente_max_entrada_a": 13.0, "corrente_max_curto_circuito_a": 16.0}
+        ok, r = dimensionamento.dimensionar(**ENTRADA, modulos=[MODULO], inversores=[inv])
+        self.assertTrue(ok)
+        im = imovel.buscar_imovel_por_id(self.id_imovel)
+        texto = proposta.formatar_proposta(proposta.montar_proposta(im, "media", 5, "Fonte de teste", r))
+        self.assertIn("Aviso:", texto)
 
     def test_texto_com_bateria(self):
         texto = proposta.formatar_proposta(self._proposta(com_bateria=True))

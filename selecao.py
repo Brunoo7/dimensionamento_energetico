@@ -28,14 +28,17 @@ def configurar_strings(modulo, inversor, n_modulos):
         Voc_frio  = n_série × Voc × FATOR_VOC_FRIO  ≤ tensão máxima de entrada
         Vmp_quente = n_série × Vmp × FATOR_VMP_QUENTE ≥ início da faixa MPPT
         Vmp (STC)  = n_série × Vmp                   ≤ fim da faixa MPPT
-        Imp × strings_em_paralelo_por_MPPT           ≤ corrente máxima de entrada (por MPPT)
-        Isc × strings_em_paralelo_por_MPPT           ≤ corrente máxima de curto-circuito (por MPPT),
-                                                       só se o dataset informar essa coluna opcional
+        Isc × strings_em_paralelo_por_MPPT ≤ corrente máxima de curto-circuito (por MPPT)
+        Imp × strings_em_paralelo_por_MPPT ≤ corrente máxima de entrada (por MPPT)
     (strings distribuídas igualmente entre os MPPTs).
 
-    A "corrente máxima de entrada" dos datasheets é a corrente de OPERAÇÃO, por isso
-    é comparada com a Imp. A Isc só é comparada com o limite de curto-circuito do
-    inversor, que costuma ser maior e vem em outra linha do datasheet.
+    Como cada limite é tratado:
+      - Se o dataset informa a corrente máxima de curto-circuito do inversor, ela é a regra de
+        SEGURANÇA (reprova se a Isc passar). Já a Imp acima da corrente máxima de entrada não
+        danifica o inversor: ele limita a corrente e há só perda de geração. Nesse caso a
+        combinação é aceita e a configuração traz um aviso.
+      - Se o dataset NÃO informa o limite de curto-circuito, o sistema é conservador e reprova
+        quando a Imp passar da corrente máxima de entrada.
 
     Retorna (True, configuração) ou (False, lista_de_motivos).
     """
@@ -50,7 +53,7 @@ def configurar_strings(modulo, inversor, n_modulos):
         corrente_curto = modulo["isc_a"] * paralelos
         limite_curto = inversor.get("corrente_max_curto_circuito_a")
 
-        problemas = []
+        problemas, avisos = [], []
         if voc_frio > inversor["tensao_max_entrada_v"]:
             problemas.append(
                 f"{n_serie} em série: Voc a frio {voc_frio:.0f} V acima do máximo "
@@ -64,9 +67,15 @@ def configurar_strings(modulo, inversor, n_modulos):
                 f"{n_serie} em série: Vmp {vmp_stc:.0f} V acima do fim "
                 f"da faixa MPPT ({inversor['faixa_mppt_max_v']:.0f} V)")
         if corrente > inversor["corrente_max_entrada_a"]:
-            problemas.append(
-                f"{n_serie} em série: corrente {corrente:.1f} A acima do máximo "
-                f"do inversor ({inversor['corrente_max_entrada_a']:.1f} A)")
+            texto = (f"{n_serie} em série: corrente {corrente:.1f} A acima do máximo "
+                     f"do inversor ({inversor['corrente_max_entrada_a']:.1f} A)")
+            if limite_curto is None:
+                problemas.append(texto)
+            else:
+                avisos.append(
+                    f"Corrente de operação dos módulos ({corrente:.1f} A por MPPT) acima da corrente máxima de "
+                    f"entrada do inversor ({inversor['corrente_max_entrada_a']:.1f} A): o inversor limita a "
+                    f"corrente e pode haver pequena perda de geração.")
         if limite_curto is not None and corrente_curto > limite_curto:
             problemas.append(
                 f"{n_serie} em série: corrente de curto-circuito {corrente_curto:.1f} A acima do "
@@ -80,6 +89,7 @@ def configurar_strings(modulo, inversor, n_modulos):
                 "voc_frio_v": round(voc_frio, 1),
                 "vmp_quente_v": round(vmp_quente, 1),
                 "corrente_por_mppt_a": round(corrente, 2),
+                "avisos": avisos,
             }
         motivos += problemas
     return False, motivos
