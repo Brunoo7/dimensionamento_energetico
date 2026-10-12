@@ -4,7 +4,7 @@ K02,Iniciar dimensionamento a partir do imóvel cadastrado,E1,PB17,Concluído,PB
 K03,"Cidade e UF no imóvel, com migração do banco",E2,PB18,Concluído,,"dados.py, imovel.py"
 K04,HSP por localidade (hsp.csv) ou manual,E2,PB19,Concluído,PB18,solar.py; confirmar cidade do imóvel de teste
 K05,"Parâmetros do dimensionamento (percentual, η, bateria, autonomia)",E2,PB20,Concluído,,parametros.py
-K06,Pesquisar e preencher modulos.csv (10 módulos),E3,PB21,Em andamento,,7 de 10; faltam 3; conferir links
+K06,Pesquisar e preencher modulos.csv (10 módulos),E3,PB21,Em andamento,,8 de 10; faltam 2; conferir links
 K07,"Pesquisar e preencher inversores.csv (8, com 2 híbridos)",E3,PB22,Em revisão,,8 de 8; conferir links e itens indisponíveis
 K08,Pesquisar e preencher baterias.csv (6),E3,PB23,Em revisão,,6 de 6; conferir pré-vendas e preços
 K09,Validador e carregador dos datasets,E3,PB24,Concluído,PB21 a PB23,"equipamentos.py, validar_datasets.py"
@@ -22,9 +22,10 @@ K20,Salvar e consultar propostas,E8,PB35,Concluído,PB34,"proposta.py, dados.py"
 K21,Integração ao menu,E8,PB36,Concluído,PB34,main.py
 K22,Rodar cenários sem e com bateria (consumo simulado de 160 kWh/mês),E9,PB37,Concluído,"K06 a K08, K18",evidencias/; refazer com consumo real se houver
 K23,Guardar prints e evidências do SunData em evidencias/,E9,PB37,Em andamento,K04,gráfico e tabela do plano inclinado
-K24,"Documentar fontes, premissas e cenários no README",E9,PB38,A fazer,K22,usar docs/PREMISSAS_E_FONTES.md (já traz a seção de cenários)
-K25,Exportar o backlog da sprint em PDF e atualizar o repositório,E9,PB38,A fazer,,"documento do backlog, menu Export, PDF"
+K24,"Documentar fontes, premissas e cenários no README",E9,PB38,Em revisão,K22,"README.md atualizado com premissas, fontes e cenários; revisar"
+K25,Exportar o backlog da sprint em PDF e atualizar o repositório,E9,PB38,Em revisão,,Product_Backlog_Sprint_FV.pdf gerado; conferir e commitar
 K26,Confirmar cada link dos candidatos (preço e estoque),E3,PB21 a PB23,A fazer,K06 a K08,"divisão entre a equipe, revisão cruzada"
 K27,Editar e excluir imóvel,Sprint 1,PB04,Concluído,,"imovel.py, main.py"
 K28,Gráfico do histórico de consumo,Sprint 1,PB12,Concluído,,grafico.py
 K29,Senha com PBKDF2 e sal,Melhoria,,Concluído,,usuario.py
+K30,Acrescentar módulos extras para compatibilizar com a faixa MPPT,E5,PB39,Concluído,"PB26, PB28, PB29",dimensionamento.py
