@@ -112,7 +112,7 @@ Prioridade: A = alta, M = média, B = baixa.
 | PB18 | T1 adicionar cidade e UF em imoveis; T2 script de migração (ALTER TABLE); T3 atualizar cadastro e validação; T4 testar com banco antigo |
 | PB19 | T1 pesquisar HSP (CRESESB ou Atlas) das cidades-alvo; T2 criar hsp.csv com fonte e data; T3 função buscar_hsp(); T4 fallback manual |
 | PB20 | T1 tela de parâmetros; T2 validações de faixa; T3 arquivo de parâmetros padrão |
-| PB21 a PB23 | T1 pesquisar fabricantes e datasheets; T2 levantar preços em fornecedores; T3 preencher o CSV; T4 revisão cruzada por outro membro; T5 commit dos CSVs |
+| PB21 a PB23 | T1 pesquisar fabricantes e datasheets; T2 levantar preços em fornecedores; T3 preencher o CSV; T4 revisão cruzada por outro membro; T5 commit dos CSVs; T6 reconfirmar preço/estoque por produto antes de orçamento real |
 | PB24 | T1 definir schema; T2 função de leitura; T3 validações com mensagens por linha; T4 testes com CSV inválido |
 | PB25 | T1 função calcular_potencia_fv(); T2 testes com o exemplo |
 | PB26 | T1 critério de seleção do módulo; T2 função de N e P_instalada; T3 testes de borda (P_FV exato múltiplo do módulo) |
@@ -150,31 +150,33 @@ Prioridade: A = alta, M = média, B = baixa.
 
 Caminho crítico: PB21 a PB24 → PB25 → PB26 → PB28 e PB29 → PB31 → PB32 → PB34.
 
-## 6. Kanban
+## 6. Kanban e situação real da sprint (12/10/2026)
 
-| A fazer | Em andamento | Em revisão | Concluído |
+Os status abaixo foram reconciliados com os arquivos presentes nesta entrega. “Implementado” descreve código ou artefato existente; não significa que o fluxo foi aceito manualmente nem que preços e estoque foram confirmados para todos os produtos.
+
+| A fazer | Em andamento | Em revisão | Concluído nesta cópia |
 |---|---|---|---|
-| Conferir links dos dados pesquisados; completar 2 módulos; colar documentação no README; exportar este backlog | PB21 (módulos 8 de 10); evidências do SunData | PB22, PB23 e PB33 (conferir links e preços) | PB16 a PB20, PB24 a PB32, PB34 a PB37, PB39 e as pendências da Sprint 1 |
+| Testes manuais de cadastro/login, isolamento entre usuários, persistência e propostas; publicar a versão final no GitHub | Conferência individual de preços, estoque e variantes dos equipamentos restantes; evidências adicionais do SunData, se exigidas | Revisão cruzada das fontes, compatibilidade técnica simplificada e documentação/PDF | 10 módulos, 8 inversores e 6 baterias no catálogo; validador dos CSVs; suíte automatizada; cenários reproduzíveis com e sem bateria; documentação de premissas e fontes |
 
-O Kanban completo, card a card, está em docs/KANBAN_SPRINT_FV.csv.
+O Kanban completo, card a card, está em `docs/KANBAN_SPRINT_FV.csv`. Os status dos datasets distinguem a existência dos registros da confirmação comercial dos produtos.
 
 ## 7. Status da implementação
 
-O código e os testes automáticos da sprint estão no repositório, e os cenários sem e com bateria foram gerados (consumo de referência simulado de 160 kWh/mês). Falta conferir os links dos dados pesquisados, completar 2 módulos, colar a documentação no README e exportar este backlog em PDF.
+Nesta cópia, a suíte automatizada foi executada com **85 testes aprovados**, o validador confirmou 10 módulos, 8 inversores e 6 baterias, e os dois cenários foram gerados com consumo simulado de 160 kWh/mês. A consulta comercial aprofundada cobriu apenas os três modelos usados nos cenários; os demais preços e estoques não foram todos reconfirmados individualmente. Os testes manuais listados em `docs/TESTE_DE_ACEITACAO.md` e a publicação no GitHub permanecem pendentes.
 
 | Itens | Status | Onde |
 |---|---|---|
-| PB16 a PB20 | Implementado | calculos.py, imovel.py, solar.py, parametros.py, main.py |
-| PB21 a PB23 | Em andamento: inversores (8 de 8) e baterias (6 de 6) preenchidos, módulos 8 de 10; falta conferir os links | data/ |
-| PB24 | Implementado | equipamentos.py, validar_datasets.py |
-| PB25 a PB27 | Implementado | calculos.py, dimensionamento.py |
-| PB28, PB29 e PB39 | Implementado | selecao.py, dimensionamento.py |
-| PB30 e PB31 | Implementado | calculos.py, selecao.py |
-| PB32 e PB33 | Implementado; outros custos com fonte em outros_custos.csv | orcamento.py |
-| PB34 a PB36 | Implementado | proposta.py, main.py |
-| PB37 | Implementado com consumo simulado | cenarios.py, evidencias/ |
-| PB38 | Parcial: textos prontos em docs/PREMISSAS_E_FONTES.md, falta colar no README | README.md, docs/ |
-| PB04, PB07, PB10, PB12 (Sprint 1) | Implementado | imovel.py, grafico.py, main.py |
-| Senha com PBKDF2 e sal (melhoria de segurança) | Implementado | usuario.py |
+| PB16 a PB20 | Implementado em código; fluxo manual e migração de banco antigo pendentes de aceitação | `calculos.py`, `imovel.py`, `solar.py`, `parametros.py`, `main.py` |
+| PB21 a PB23 | Quantidades mínimas atendidas (10/8/6); rastreabilidade existe, mas nem todos os preços/estoques foram reconfirmados nesta rodada | `data/`, `docs/VERIFICACAO_PRECOS_DISPONIBILIDADE_2026-10-12.md` |
+| PB24 | Validador executado sem erros estruturais | `equipamentos.py`, `validar_datasets.py` |
+| PB25 a PB27 | Implementado em código; cenários executados | `calculos.py`, `dimensionamento.py`, `evidencias/` |
+| PB28, PB29 e PB39 | Validação elétrica simplificada implementada; não substitui revisão de projeto executivo | `selecao.py`, `dimensionamento.py` |
+| PB30 e PB31 | Implementado; cenário com bateria gerado; compatibilidade real do conjunto deve ser confirmada pelo fabricante | `calculos.py`, `selecao.py` |
+| PB32 e PB33 | Orçamento calculado com preços de catálogo e estimativas de outros custos | `orcamento.py`, `data/outros_custos.csv` |
+| PB34 a PB36 | Proposta e menu implementados; percurso manual e persistência após reinício pendentes de teste | `proposta.py`, `main.py` |
+| PB37 | Dois cenários reproduzíveis com consumo simulado | `cenarios.py`, `evidencias/` |
+| PB38 | Documentação e premissas presentes; PDF da sprint regenerado nesta revisão | `README.md`, `docs/`, `Product_Backlog_Sprint_FV.pdf` |
+| PB04, PB07, PB10, PB12 (Sprint 1) | Implementado em código; aceitação manual conforme checklist | `imovel.py`, `grafico.py`, `main.py` |
+| Senha com PBKDF2 e sal (melhoria de segurança) | Implementado em código; login deve ser percorrido manualmente | `usuario.py` |
 
 *Pré-dimensionamento acadêmico e estimativa de custos; não substitui projeto elétrico executivo, responsabilidade técnica ou análise de profissional habilitado.*

@@ -67,3 +67,8 @@ python cenarios.py --consumo 160 --hsp 4.65 --fonte-hsp "CRESESB/SunData; São P
 - O cálculo elétrico usa margens simplificadas e depende da completude dos dados dos equipamentos.
 - Preços, estoque, frete e condições comerciais mudam.
 - A proposta é estimativa preliminar e não substitui projeto elétrico, ART, homologação ou avaliação de profissional habilitado.
+
+
+## Estado da verificação comercial (12/10/2026)
+
+O preenchimento do CSV não significa que todos os produtos estejam disponíveis para compra imediata. A conferência aprofundada desta rodada cobriu os três modelos utilizados nos cenários (módulo M01, inversor I08 e bateria B03). Os demais preços, variantes e estoques não foram todos reconfirmados individualmente nesta data. O campo `url_fonte` de M01 ainda aponta para a página inicial da Direta Energia Solar, não para uma página individual do produto; portanto, sua rastreabilidade de preço deve ser melhorada. Consulte `docs/VERIFICACAO_PRECOS_DISPONIBILIDADE_2026-10-12.md` antes de interpretar os valores como orçamento.

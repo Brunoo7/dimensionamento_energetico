@@ -12,7 +12,7 @@ Este documento separa verificações reproduzíveis nesta entrega de ações man
 | Cenários com e sem bateria | **Executados** | `evidencias/cenario_sem_bateria.txt` e `evidencias/cenario_com_bateria.txt` |
 | Propostas e valores de orçamento | **Evidências regeneradas** | Os arquivos acima refletem os CSVs atuais, com preços consultados em 12/10/2026 |
 | Interface/fluxos interativos completos | **Pendente** | Não foi possível comprovar todos os fluxos por interação manual nesta rodada |
-| Estoque de todos os equipamentos | **Não confirmado** | A consulta aprofundada foi limitada aos modelos indicados em `VERIFICACAO_PRECOS_DISPONIBILIDADE_2026-10-12.md` |
+| Preço/estoque de todos os equipamentos | **Parcialmente confirmado** | A consulta aprofundada foi limitada aos três modelos dos cenários; demais itens precisam de verificação individual em `VERIFICACAO_PRECOS_DISPONIBILIDADE_2026-10-12.md` |
 | Publicação no GitHub | **Pendente** | Esta entrega local não faz push para o repositório remoto |
 
 ## Roteiro manual ainda necessário

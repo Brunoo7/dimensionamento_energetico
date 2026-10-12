@@ -88,7 +88,7 @@ Vêm de `data/outros_custos.csv`, cada item com fonte. A mão de obra de instala
 | Dataset | Fonte | Observação |
 |---|---|---|
 | `hsp.csv` | CRESESB/SunData (http://cresesb.cepel.br/index.php#data), estação São Paulo/SP a 5,4 km do ponto de referência, plano inclinado com ângulo igual à latitude (24°), média anual de 4,65 kWh/m²/dia | Print e transcrição em `evidencias/`. Confirmar se a cidade do imóvel de teste é São Paulo/SP |
-| `modulos.csv` | Lojas: Minha Casa Solar, Eletrotrafo, Direta Energia Solar, Buyers Energy e Stentor do Brasil. Fichas: páginas dos fornecedores e datasheet Leapton, além de datasheets de TCL, Honor e Trina, distribuidora Techlux (Ronma) e registro INMETRO | Cada linha traz o link do produto e a fonte da ficha. M09 e M10 completam o mínimo de 10 módulos; ambos estavam indisponíveis na consulta e M10 exige compra mínima de 12 unidades. Preço e estoque devem ser reconfirmados antes de usar em orçamento real |
+| `modulos.csv` | Lojas: Minha Casa Solar, Eletrotrafo, Direta Energia Solar, Buyers Energy e Stentor do Brasil. Fichas: páginas dos fornecedores e datasheets de fabricantes, distribuidora Techlux (Ronma) e registro INMETRO | O CSV tem 10 registros. A rastreabilidade de M01 precisa ser melhorada: a URL de preço atualmente abre a página inicial da Direta Energia Solar, não uma página individual do produto. M09/M10 e demais itens devem ter preço, estoque, variante e eventuais condições de compra reconfirmados antes de orçamento real |
 | `inversores.csv` | Lojas: Minha Casa Solar e Neosolar. Fichas: página da loja e site da Deye (série SG04LP1) | Alguns itens estavam em pré-venda ou indisponíveis (ver coluna `observacao`) |
 | `baterias.csv` | Lojas: MeuGerador, Energy Shop e Minha Casa Solar. Ficha da Deye no site do fabricante | Livoltek e Unipower estavam em pré-venda |
 | `outros_custos.csv` | SGV Solar, Shopuruara, Energy Shop e artigo de mercado (larpontual.com.br) | Instalação é estimativa de referência |
@@ -116,6 +116,13 @@ Observações: os preços dependem da confirmação dos links (alguns itens esta
 - A validação elétrica é simplificada (margens de tensão e de corrente) e não substitui projeto executivo.
 - Não considera sombreamento, orientação, inclinação específica do telhado nem perdas do local.
 
+
+## Situação da validação da entrega (12/10/2026)
+
+- Suíte automatizada: 85 testes aprovados nesta cópia (`python -m pytest -q`).
+- Validação estrutural: 10 módulos, 8 inversores, 6 baterias e 1 localidade HSP aprovados (`python validar_datasets.py`).
+- Cenários: arquivos com e sem bateria presentes em `evidencias/`; o consumo de 160 kWh/mês é simulado.
+- Pendências: roteiro manual em `docs/TESTE_DE_ACEITACAO.md`, conferência individual dos preços/estoques restantes e publicação final no GitHub. Os status detalhados estão em `docs/KANBAN_SPRINT_FV.csv`.
 
 ## Checklist de aceitação manual antes da apresentação
 
