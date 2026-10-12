@@ -95,7 +95,7 @@ Vêm de `data/outros_custos.csv`, cada item com fonte. A mão de obra de instala
 | Consumo de referência dos cenários | Entrada simulada de 160 kWh/mês, escolhida para demonstrar o funcionamento do sistema | Não é consumo medido nem média oficial atribuída à EPE. Substituir pelo consumo do imóvel quando houver dados reais |
 
 ## Cenários testados
-Entradas comuns: consumo de referência **simulado** de 160 kWh/mês (média nacional residencial, não é um imóvel real), atendimento de 100%, HSP de 4,65 kWh/m²/dia (CRESESB/SunData, São Paulo/SP, 24°, média anual), η = 0,75. Resultados completos em `evidencias/cenario_sem_bateria.txt` e `evidencias/cenario_com_bateria.txt`.
+Entradas comuns: consumo de referência **simulado** de 160 kWh/mês (valor escolhido na ordem de grandeza do consumo residencial médio brasileiro; não é consumo medido de um imóvel real nem média oficial atribuída à EPE), atendimento de 100%, HSP de 4,65 kWh/m²/dia (CRESESB/SunData, São Paulo/SP, 24°, média anual), η = 0,75. Resultados completos em `evidencias/cenario_sem_bateria.txt` e `evidencias/cenario_com_bateria.txt`.
 
 | Item | Cenário A (sem bateria) | Cenário B (com bateria, 12 h) |
 |---|---|---|
@@ -109,7 +109,9 @@ Entradas comuns: consumo de referência **simulado** de 160 kWh/mês (média nac
 | Outros custos | R$ 2.513,00 | R$ 3.723,00 |
 | **Custo total estimado** | **R$ 5.561,70** | **R$ 18.235,55** |
 
-Observações: os preços dependem da confirmação dos links (alguns itens estavam em pré-venda ou indisponíveis); o consumo é simulado e deve ser substituído pelo de um imóvel real, se houver. Os valores da tabela foram regenerados a partir dos CSVs incluídos em 12/10/2026; consulte as evidências para os subtotais atualizados.
+Observação sobre o cenário B: a geração estimada fica em 179,8% do consumo porque o inversor híbrido de 5 kW exige strings com tensão acima do início da faixa MPPT (150 V), o que obrigou a acrescentar 2 módulos. O custo do cenário B é, portanto, inflado por essa limitação do inversor escolhido, e não só pela bateria.
+
+Outras observações: os preços dependem da confirmação dos links (alguns itens estavam em pré-venda ou indisponíveis); o consumo é simulado e deve ser substituído pelo de um imóvel real, se houver. Os valores da tabela foram regenerados a partir dos CSVs incluídos em 12/10/2026; consulte as evidências para os subtotais atualizados.
 
 ## Limitações conhecidas
 - Preços e disponibilidade de loja variam; as consultas valem para as datas indicadas.
@@ -119,7 +121,7 @@ Observações: os preços dependem da confirmação dos links (alguns itens esta
 
 ## Situação da validação da entrega (12/10/2026)
 
-- Suíte automatizada: 85 testes aprovados nesta cópia (`python -m pytest -q`).
+- Suíte automatizada: 85 testes aprovados nesta cópia (`python -m unittest discover -s tests -t .`).
 - Validação estrutural: 10 módulos, 8 inversores, 6 baterias e 1 localidade HSP aprovados (`python validar_datasets.py`).
 - Cenários: arquivos com e sem bateria presentes em `evidencias/`; o consumo de 160 kWh/mês é simulado.
 - Pendências: roteiro manual em `docs/TESTE_DE_ACEITACAO.md`, conferência individual dos preços/estoques restantes e publicação final no GitHub. Os status detalhados estão em `docs/KANBAN_SPRINT_FV.csv`.
