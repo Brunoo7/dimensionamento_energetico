@@ -1,22 +1,32 @@
-# Roteiro de teste de aceitação manual
+# Verificação de aceitação — rodada de 12/10/2026
 
-Executado em 12/10/2026 no terminal, usando cópia isolada do projeto, banco SQLite temporário e dois usuários fictícios (QA Usuário A/B). Nenhum dado de teste foi gravado no banco entregue.
+Este documento separa verificações reproduzíveis nesta entrega de ações manuais que ainda dependem de uma pessoa percorrer o menu. Não marque como manualmente concluído algo coberto apenas por testes unitários.
 
-| ID | Ação | Resultado esperado | Status nesta entrega |
-|---|---|---|---|
-| TA01 | Cadastrar usuário válido e entrar | Cadastro concluído e login autorizado | **Verificado manualmente:** dois usuários cadastrados e login do usuário A e B concluído |
-| TA02 | E-mail duplicado e credenciais inválidas | Mensagem de validação; login não autorizado | Cobertura automatizada; fluxo negativo não percorrido manualmente nesta rodada |
-| TA03 | Cadastrar, editar e excluir imóvel | Operações concluídas com confirmação de exclusão | **Cadastro verificado manualmente**; edição/exclusão cobertas por testes automatizados, não percorridas no menu nesta rodada |
-| TA04 | Inserir consumo em vários meses | Histórico cronológico, média e maior consumo/mês corretos | **Verificado manualmente:** 150 kWh em jan/2026 e 170 kWh em fev/2026; histórico e resumo exibidos; média esperada de 160 kWh/mês |
-| TA05 | Acessar dados de outro usuário | Dados de outro usuário não aparecem nem podem ser acessados | **Verificado manualmente para listagem:** usuário B não viu o imóvel nem as propostas do usuário A; bloqueios por ID também cobertos por testes automatizados |
-| TA06 | Gerar proposta sem bateria | Cálculo, avisos, orçamento e persistência funcionam | **Verificado manualmente no menu:** proposta gerada, salva e reaberta na mesma sessão |
-| TA07 | Gerar proposta com bateria | Compatibilidade, autonomia estimada, orçamento e persistência funcionam | Cenário de linha de comando executado; ainda não percorrido pelo menu interativo nesta rodada |
-| TA08 | Encerrar e reabrir o sistema | Dados persistem no SQLite | Cobertura automatizada; reabertura após reiniciar o programa não foi executada nesta rodada |
-| TA09 | Validar CSVs | Sem erros estruturais e quantidades mínimas cumpridas | Executado; sem erros estruturais |
-| TA10 | Executar suíte completa | Todos os testes passam | Executado; 85 testes aprovados |
+## Resultados reproduzidos nesta rodada
 
-## Limites da verificação
+| Verificação | Resultado | Evidência |
+|---|---|---|
+| Suíte automatizada | **85 aprovados** | `python -m pytest -q` |
+| Compilação dos módulos principais | **Aprovada** | `python -m py_compile ...` |
+| Estrutura dos datasets | **Aprovada** | `python validar_datasets.py`: 10 módulos, 8 inversores, 6 baterias e 1 localidade HSP |
+| Cenários com e sem bateria | **Executados** | `evidencias/cenario_sem_bateria.txt` e `evidencias/cenario_com_bateria.txt` |
+| Propostas e valores de orçamento | **Evidências regeneradas** | Os arquivos acima refletem os CSVs atuais, com preços consultados em 12/10/2026 |
+| Interface/fluxos interativos completos | **Pendente** | Não foi possível comprovar todos os fluxos por interação manual nesta rodada |
+| Estoque de todos os equipamentos | **Não confirmado** | A consulta aprofundada foi limitada aos modelos indicados em `VERIFICACAO_PRECOS_DISPONIBILIDADE_2026-10-12.md` |
+| Publicação no GitHub | **Pendente** | Esta entrega local não faz push para o repositório remoto |
 
-- O fluxo manual usou dados fictícios e um diretório temporário; não alterou o banco original do projeto.
-- O isolamento foi verificado pela ausência de imóveis e propostas do usuário A ao entrar como usuário B. A proteção de operações diretas por ID está também coberta por testes automatizados.
-- Preços e disponibilidade de lojas são fotografias de páginas consultadas em 12/10/2026; podem mudar, e frete/prazo dependem do CEP.
+## Roteiro manual ainda necessário
+
+- [ ] Cadastrar usuário e confirmar rejeição de e-mail duplicado e senha inválida.
+- [ ] Entrar com credenciais válidas e confirmar rejeição de senha incorreta.
+- [ ] Cadastrar, editar e excluir imóvel, incluindo cancelamento da confirmação.
+- [ ] Registrar consumos em meses diferentes e conferir ordem cronológica, média, máximo e mês correspondente.
+- [ ] Com dois usuários, tentar consultar, alterar e excluir imóvel/consumo/proposta por ID cruzado.
+- [ ] Gerar proposta com e sem bateria pelo menu, salvar e consultar propostas.
+- [ ] Fechar e reabrir o programa e confirmar persistência no SQLite.
+- [ ] Testar migração com cópia de um banco antigo sem as colunas `cidade` e `uf`.
+- [ ] Fazer revisão elétrica por profissional habilitado antes de usar qualquer dimensionamento em instalação real.
+
+## Limitações
+
+Os testes automatizados não substituem a verificação manual da experiência de uso. Preços de catálogo não são cotação comercial, estoque, frete ou prazo garantido. O dimensionamento é preliminar e não substitui projeto executivo.

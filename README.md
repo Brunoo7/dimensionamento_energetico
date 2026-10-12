@@ -105,11 +105,11 @@ Entradas comuns: consumo de referência **simulado** de 160 kWh/mês (média nac
 | Inversor | Deye SUN-3K-G04P1-EU-AM1 (string) | Deye SUN-5K-SG04LP1-EU (híbrido) |
 | Armazenamento | não | 1 × Livoltek BLF-B51100 (5,12 kWh nominais; necessário 3,12 kWh) |
 | Geração estimada | 172,6 kWh/mês (107,9%) | 287,7 kWh/mês (179,8%) |
-| Custo dos equipamentos | R$ 3.022,27 | R$ 14.613,80 |
+| Custo dos equipamentos | R$ 3.048,70 | R$ 14.512,55 |
 | Outros custos | R$ 2.513,00 | R$ 3.723,00 |
-| **Custo total estimado** | **R$ 5.535,27** | **R$ 18.336,80** |
+| **Custo total estimado** | **R$ 5.561,70** | **R$ 18.235,55** |
 
-Observações: os preços dependem da confirmação dos links (alguns itens estavam em pré-venda ou indisponíveis); o consumo é simulado e deve ser substituído pelo de um imóvel real, se houver.
+Observações: os preços dependem da confirmação dos links (alguns itens estavam em pré-venda ou indisponíveis); o consumo é simulado e deve ser substituído pelo de um imóvel real, se houver. Os valores da tabela foram regenerados a partir dos CSVs incluídos em 12/10/2026; consulte as evidências para os subtotais atualizados.
 
 ## Limitações conhecidas
 - Preços e disponibilidade de loja variam; as consultas valem para as datas indicadas.

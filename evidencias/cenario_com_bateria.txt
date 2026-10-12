@@ -1,11 +1,11 @@
-NOTA: Consumo simulado para demonstração acadêmica; não é consumo medido de imóvel real. Preços de catálogo consultados em 12/10/2026; estoque e prazo devem ser confirmados com as lojas.
+NOTA: Consumo simulado para demonstração acadêmica; não é consumo medido de imóvel real.
 
 ===== PROPOSTA PRELIMINAR DE SISTEMA FOTOVOLTAICO =====
 Imóvel: Cenário de teste (São Paulo/SP)
 Consumo de referência utilizado: 160.00 kWh/mês (valor informado)
 Percentual de atendimento solicitado: 100%
 Energia mensal que se pretende gerar: 160.00 kWh/mês
-HSP utilizado: 4.65 kWh/m²/dia (fonte: CRESESB/SunData; São Paulo/SP; consulta registrada em evidencias)
+HSP utilizado: 4.65 kWh/m²/dia (fonte: CRESESB/SunData; São Paulo/SP; evidência registrada)
 Fator de desempenho (η): 0.75 | dias considerados: 30
 Potência FV calculada: 1.529 kWp
 Potência FV instalada: 2.750 kWp
