@@ -225,6 +225,46 @@ class TesteDimensionar(unittest.TestCase):
         self.assertEqual(r["n_modulos"], 4)   # 1,709 kWp / 0,55 = 3,1 -> 4
 
 
+class TesteModulosExtras(unittest.TestCase):
+    HIBRIDO_MPPT_ALTO = {**INV_HIBRIDO, "id": "I9", "faixa_mppt_min_v": 150.0}
+
+    def test_sistema_pequeno_ganha_modulos_para_alcancar_a_faixa_mppt(self):
+        # consumo baixo -> 3 módulos; com 3 em série a Vmp a quente (106 V) fica abaixo de 150 V
+        ok, r = dimensionamento.dimensionar(consumo_ref_kwh=160.0, hsp=4.65, fracao=1.0, eta=0.75,
+                                            modulos=[MODULO], inversores=[self.HIBRIDO_MPPT_ALTO],
+                                            baterias=[BAT], com_bateria=True, autonomia_h=12)
+        self.assertTrue(ok)
+        self.assertEqual(r["n_modulos"], 5)
+        self.assertEqual(r["modulos_extras"], 2)
+        self.assertGreaterEqual(r["potencia_instalada_kwp"], r["potencia_fv_kwp"])
+
+    def test_sem_extras_quando_nao_precisa(self):
+        ok, r = dimensionamento.dimensionar(**ENTRADA, modulos=[MODULO], inversores=[INV_STRING])
+        self.assertTrue(ok)
+        self.assertEqual(r["modulos_extras"], 0)
+
+    def test_respeita_o_limite_de_extras(self):
+        import parametros
+        original = parametros.MODULOS_EXTRAS_MAX
+        parametros.MODULOS_EXTRAS_MAX = 0
+        try:
+            ok, _ = dimensionamento.dimensionar(consumo_ref_kwh=160.0, hsp=4.65, fracao=1.0, eta=0.75,
+                                                modulos=[MODULO], inversores=[self.HIBRIDO_MPPT_ALTO],
+                                                baterias=[BAT], com_bateria=True, autonomia_h=12)
+        finally:
+            parametros.MODULOS_EXTRAS_MAX = original
+        self.assertFalse(ok)
+
+    def test_proposta_avisa_dos_modulos_extras(self):
+        ok, r = dimensionamento.dimensionar(consumo_ref_kwh=160.0, hsp=4.65, fracao=1.0, eta=0.75,
+                                            modulos=[MODULO], inversores=[self.HIBRIDO_MPPT_ALTO],
+                                            baterias=[BAT], com_bateria=True, autonomia_h=12)
+        self.assertTrue(ok)
+        texto = proposta.formatar_proposta(proposta.montar_proposta(
+            {"id": None, "nome": "t", "cidade": "X", "uf": "SP"}, "informado", None, "fonte de teste", r))
+        self.assertIn("acrescentados 2 módulo(s)", texto)
+
+
 class TesteInversorComColunasOpcionais(unittest.TestCase):
     CAB = ("id,fabricante,modelo,tipo,potencia_nominal_w,potencia_max_fv_w,tensao_max_entrada_v,faixa_mppt_min_v,"
            "faixa_mppt_max_v,corrente_max_entrada_a,numero_mppt,compativel_bateria,preco_brl,fornecedor,data_coleta,url_fonte")

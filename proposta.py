@@ -61,6 +61,11 @@ def formatar_proposta(p):
         f"(Voc a frio {st['voc_frio_v']:.0f} V, Vmp a quente {st['vmp_quente_v']:.0f} V)",
         f"Inversor: {inv['fabricante']} {inv['modelo']} ({inv['potencia_nominal_w']:.0f} W, tipo {inv['tipo']})",
     ]
+    if p.get("modulos_extras"):
+        linhas.append(
+            f"  Aviso: foram acrescentados {p['modulos_extras']} módulo(s) além do necessário para a potência "
+            f"calculada, para a tensão das strings ficar dentro da faixa MPPT do inversor. A geração estimada "
+            f"fica acima do consumo de referência.")
     for aviso in st.get("avisos", []):
         linhas.append(f"  Aviso: {aviso}")
 

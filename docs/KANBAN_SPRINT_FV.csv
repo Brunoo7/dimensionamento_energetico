@@ -20,9 +20,9 @@ K18,Outros custos com fonte (outros_custos.csv),E7,PB33,Em revisão,PB32,4 itens
 K19,Proposta preliminar ao cliente,E8,PB34,Concluído,"PB27, PB29, PB33",proposta.py
 K20,Salvar e consultar propostas,E8,PB35,Concluído,PB34,"proposta.py, dados.py"
 K21,Integração ao menu,E8,PB36,Concluído,PB34,main.py
-K22,Rodar cenários sem e com bateria com o consumo real do imóvel,E9,PB37,A fazer,"K06 a K08, K18",precisa da média real de consumo
+K22,Rodar cenários sem e com bateria (consumo simulado de 160 kWh/mês),E9,PB37,Concluído,"K06 a K08, K18",evidencias/; refazer com consumo real se houver
 K23,Guardar prints e evidências do SunData em evidencias/,E9,PB37,Em andamento,K04,gráfico e tabela do plano inclinado
-K24,"Documentar fontes, premissas e cenários no README",E9,PB38,A fazer,K22,usar docs/PREMISSAS_E_FONTES.md
+K24,"Documentar fontes, premissas e cenários no README",E9,PB38,A fazer,K22,usar docs/PREMISSAS_E_FONTES.md (já traz a seção de cenários)
 K25,Exportar o backlog da sprint em PDF e atualizar o repositório,E9,PB38,A fazer,,"documento do backlog, menu Export, PDF"
 K26,Confirmar cada link dos candidatos (preço e estoque),E3,PB21 a PB23,A fazer,K06 a K08,"divisão entre a equipe, revisão cruzada"
 K27,Editar e excluir imóvel,Sprint 1,PB04,Concluído,,"imovel.py, main.py"

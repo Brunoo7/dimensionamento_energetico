@@ -46,29 +46,33 @@ def dimensionar(consumo_ref_kwh, hsp, fracao, eta, modulos, inversores,
     p_fv = calculos.potencia_fv_kwp(energia_fv, hsp, eta)
 
     # --- módulo + inversor (PB26, PB28, PB29) ---
-    # Testa os módulos do mais barato (R$/Wp) para o mais caro até achar um
-    # que tenha inversor compatível.
+    # Primeiro tenta todos os módulos (do mais barato em R$/Wp ao mais caro) com a quantidade
+    # necessária. Se nenhum tiver inversor compatível (por exemplo, a tensão das strings fica
+    # abaixo da faixa MPPT), acrescenta módulos, um a um, até MODULOS_EXTRAS_MAX.
     modulos_ordenados = sorted(modulos, key=lambda m: m["preco_brl"] / m["potencia_wp"])
     escolhido = None
     motivos_inversor = []
-    for modulo in modulos_ordenados:
-        n = calculos.quantidade_modulos(p_fv, modulo["potencia_wp"])
-        p_inst = calculos.potencia_instalada_kwp(n, modulo["potencia_wp"])
-        inversor, strings, rejeicoes = selecao.selecionar_inversor(
-            modulo, n, inversores, exigir_bateria=com_bateria)
-        if inversor is not None:
-            escolhido = (modulo, n, p_inst, inversor, strings)
+    for extras in range(0, parametros.MODULOS_EXTRAS_MAX + 1):
+        for modulo in modulos_ordenados:
+            n = calculos.quantidade_modulos(p_fv, modulo["potencia_wp"]) + extras
+            p_inst = calculos.potencia_instalada_kwp(n, modulo["potencia_wp"])
+            inversor, strings, rejeicoes = selecao.selecionar_inversor(
+                modulo, n, inversores, exigir_bateria=com_bateria)
+            if inversor is not None:
+                escolhido = (modulo, n, p_inst, inversor, strings, extras)
+                break
+            if extras == 0 and not motivos_inversor:   # guarda o motivo do módulo mais barato
+                for id_inv, motivos in rejeicoes.items():
+                    motivos_inversor.append(f"{id_inv}: " + "; ".join(motivos))
+        if escolhido is not None:
             break
-        if not motivos_inversor:   # guarda o motivo do módulo mais barato
-            for id_inv, motivos in rejeicoes.items():
-                motivos_inversor.append(f"{id_inv}: " + "; ".join(motivos))
 
     if escolhido is None:
         quem = "com bateria (inversor híbrido) " if com_bateria else ""
         return False, ([f"Nenhum inversor {quem}compatível com os módulos do dataset. Motivos (módulo mais barato):"]
                        + motivos_inversor)
 
-    modulo, n_modulos, p_instalada, inversor, strings = escolhido
+    modulo, n_modulos, p_instalada, inversor, strings, modulos_extras = escolhido
     geracao = calculos.geracao_mensal_kwh(p_instalada, hsp, eta)
 
     # --- baterias (PB30, PB31) ---
@@ -94,6 +98,7 @@ def dimensionar(consumo_ref_kwh, hsp, fracao, eta, modulos, inversores,
         "potencia_fv_kwp": p_fv,
         "modulo": modulo,
         "n_modulos": n_modulos,
+        "modulos_extras": modulos_extras,
         "potencia_instalada_kwp": p_instalada,
         "strings": strings,
         "inversor": inversor,

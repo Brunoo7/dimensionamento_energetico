@@ -34,6 +34,7 @@ def main():
     ap.add_argument("--eta", type=float, default=parametros.ETA_PADRAO)
     ap.add_argument("--autonomia", type=float, default=12.0, help="horas de autonomia (cenário com bateria)")
     ap.add_argument("--pasta", default=equipamentos.PASTA_DADOS, help="pasta com os CSVs")
+    ap.add_argument("--nota", default="", help="texto exibido no topo dos arquivos de evidência (ex.: consumo simulado)")
     args = ap.parse_args()
 
     modulos, e1 = equipamentos.carregar_modulos(args.pasta)
@@ -57,6 +58,8 @@ def main():
             texto = proposta.formatar_proposta(p)
         else:
             texto = "Não foi possível dimensionar:\n" + "\n".join(resultado)
+        if args.nota:
+            texto = f"NOTA: {args.nota}\n\n" + texto
         with open(caminho, "w", encoding="utf-8") as f:
             f.write(texto + "\n")
         print(f"\n##### Cenário {nome.replace('_', ' ')} -> {caminho}\n{texto}")
