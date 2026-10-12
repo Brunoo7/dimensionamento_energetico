@@ -15,7 +15,7 @@ Antes de copiar uma linha para `data/*.csv`:
 
 | Arquivo | Linhas | Mínimo exigido |
 |---|---|---|
-| modulos.csv | 6 (Canadian Solar, Ronma, Osda, TCL, Honor, Jinko) | 10 |
+| modulos.csv | 7 (Canadian Solar, Ronma, Osda, TCL, Honor, Jinko, Trina) | 10 |
 | inversores.csv | 8 (Growatt MIC3000TL-X; Deye SUN-5K-G; BelEnergy BEL3KG; Deye SUN-3K-G04; híbridos Deye SG04LP1 de 3, 5 e 6 kW e SG02LP2 de 5 kW) | 8 |
 | baterias.csv | 6 (Deye SE-G5.1 Pro-B, Deye SE-F5, MUST LP16, Livoltek BLF-B51100, GetPower GPLIFE48-100TS, Unipower UPLFP48) | 6 |
 

@@ -1,0 +1,30 @@
+id,card,épico,história,coluna,depende_de,observação
+K01,Consumo de referência (média ou máximo) com aviso de menos de 12 meses,E1,PB16,Concluído,"PB05, PB06, PB09",calculos.py
+K02,Iniciar dimensionamento a partir do imóvel cadastrado,E1,PB17,Concluído,PB15,main.py
+K03,"Cidade e UF no imóvel, com migração do banco",E2,PB18,Concluído,,"dados.py, imovel.py"
+K04,HSP por localidade (hsp.csv) ou manual,E2,PB19,Concluído,PB18,solar.py; confirmar cidade do imóvel de teste
+K05,"Parâmetros do dimensionamento (percentual, η, bateria, autonomia)",E2,PB20,Concluído,,parametros.py
+K06,Pesquisar e preencher modulos.csv (10 módulos),E3,PB21,Em andamento,,7 de 10; faltam 3; conferir links
+K07,"Pesquisar e preencher inversores.csv (8, com 2 híbridos)",E3,PB22,Em revisão,,8 de 8; conferir links e itens indisponíveis
+K08,Pesquisar e preencher baterias.csv (6),E3,PB23,Em revisão,,6 de 6; conferir pré-vendas e preços
+K09,Validador e carregador dos datasets,E3,PB24,Concluído,PB21 a PB23,"equipamentos.py, validar_datasets.py"
+K10,Cálculo da energia a gerar e da potência FV,E4,PB25,Concluído,"PB16, PB19, PB20",calculos.py
+K11,"Seleção do módulo, quantidade e potência instalada",E4,PB26,Concluído,"PB25, PB24",dimensionamento.py
+K12,Geração mensal estimada,E4,PB27,Concluído,PB26,calculos.py
+K13,Seleção do inversor,E5,PB28,Concluído,"PB26, PB24",selecao.py
+K14,Validação das strings (tensão e corrente),E5,PB29,Concluído,"PB26, PB28",selecao.py
+K15,Dimensionamento de baterias,E6,PB30,Concluído,"PB16, PB20",calculos.py
+K16,Seleção de bateria e inversor híbrido compatível,E6,PB31,Concluído,"PB30, PB23, PB28",selecao.py
+K17,Orçamento dos equipamentos,E7,PB32,Concluído,"PB26, PB28, PB31",orcamento.py
+K18,Outros custos com fonte (outros_custos.csv),E7,PB33,Em revisão,PB32,4 itens; instalação é estimativa; conferir links
+K19,Proposta preliminar ao cliente,E8,PB34,Concluído,"PB27, PB29, PB33",proposta.py
+K20,Salvar e consultar propostas,E8,PB35,Concluído,PB34,"proposta.py, dados.py"
+K21,Integração ao menu,E8,PB36,Concluído,PB34,main.py
+K22,Rodar cenários sem e com bateria com o consumo real do imóvel,E9,PB37,A fazer,"K06 a K08, K18",precisa da média real de consumo
+K23,Guardar prints e evidências do SunData em evidencias/,E9,PB37,Em andamento,K04,gráfico e tabela do plano inclinado
+K24,"Documentar fontes, premissas e cenários no README",E9,PB38,A fazer,K22,usar docs/PREMISSAS_E_FONTES.md
+K25,Exportar o backlog da sprint em PDF e atualizar o repositório,E9,PB38,A fazer,,"documento do backlog, menu Export, PDF"
+K26,Confirmar cada link dos candidatos (preço e estoque),E3,PB21 a PB23,A fazer,K06 a K08,"divisão entre a equipe, revisão cruzada"
+K27,Editar e excluir imóvel,Sprint 1,PB04,Concluído,,"imovel.py, main.py"
+K28,Gráfico do histórico de consumo,Sprint 1,PB12,Concluído,,grafico.py
+K29,Senha com PBKDF2 e sal,Melhoria,,Concluído,,usuario.py
