@@ -15,9 +15,9 @@ Antes de copiar uma linha para `data/*.csv`:
 
 | Arquivo | Linhas | Mínimo exigido |
 |---|---|---|
-| modulos.csv | 4 (Canadian Solar CS6W-550MS, Ronma RM-585W-182M/144TB, Osda ODA585-144MHD, TCL HSM-ND66-GR615) | 10 |
-| inversores.csv | 4 (Growatt MIC3000TL-X; Deye SUN-5K-G; híbridos Deye SUN-5K-SG04LP1-EU e SUN-5K-SG02LP2-US-AM2) | 8 |
-| baterias.csv | 3 (Deye SE-G5.1 Pro-B, MUST LP16-48100, Livoltek BLF-B51100 em pré-venda) | 6 |
+| modulos.csv | 6 (Canadian Solar, Ronma, Osda, TCL, Honor, Jinko) | 10 |
+| inversores.csv | 8 (Growatt MIC3000TL-X; Deye SUN-5K-G; BelEnergy BEL3KG; Deye SUN-3K-G04; híbridos Deye SG04LP1 de 3, 5 e 6 kW e SG02LP2 de 5 kW) | 8 |
+| baterias.csv | 6 (Deye SE-G5.1 Pro-B, Deye SE-F5, MUST LP16, Livoltek BLF-B51100, GetPower GPLIFE48-100TS, Unipower UPLFP48) | 6 |
 
 Faltam também `hsp.csv` (consulta ao CRESESB/SunData, que é um formulário interativo) e `outros_custos.csv`.
 Com estes candidatos, os dois cenários (sem e com bateria) já rodam no sistema usando um HSP de exemplo.
