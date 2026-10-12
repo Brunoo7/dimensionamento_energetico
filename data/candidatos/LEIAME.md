@@ -1,30 +1,23 @@
-# Candidatos pesquisados (CONFERIR ANTES DE USAR)
+# Candidatos de equipamentos — conferir antes de usar em orçamento real
 
-Estes CSVs têm o mesmo formato dos de `data/`, mais duas colunas extras (`fonte_especificacao` e `observacao`).
-Cada linha vem de páginas de lojas brasileiras consultadas em **2026-10-11**; o `url_fonte` aponta para a página do produto.
+Este diretório mantém opções pesquisadas que ainda exigem confirmação comercial e/ou técnica. Os CSVs de `data/` são a base usada nos cenários do programa; a aprovação do validador confirma apenas estrutura, tipos e quantidades, não garante estoque, preço atual nem compatibilidade certificada.
 
-**Não são dados finais.** Preço e estoque mudam, algumas páginas divergem entre lojas e uma delas bloqueou a leitura automática.
-Antes de copiar uma linha para `data/*.csv`:
+## Conteúdo e quantidade mínima
 
-1. Abra o `url_fonte` e confirme o preço e a disponibilidade. Atualize `preco_brl` e `data_coleta` se mudaram.
-2. Confira os valores elétricos no datasheet do fabricante (a coluna `fonte_especificacao` diz de onde vieram).
-3. Leia a coluna `observacao`, que registra divergências encontradas.
-4. Copie a linha para o CSV de `data/` (as colunas extras podem ficar ou ser removidas) e rode `python validar_datasets.py`.
+| Arquivo | Registros em `data/` | Mínimo exigido | Observação |
+|---|---:|---:|---|
+| `modulos.csv` | 10 | 10 | M09 e M10 completam a quantidade. As páginas consultadas indicavam indisponibilidade; M10 tinha compra mínima de 12 unidades. |
+| `inversores.csv` | 8 | 8 | A base inclui inversores string e híbridos. Verifique a coluna `observacao` para disponibilidade e diferenças de especificação. |
+| `baterias.csv` | 6 | 6 | Alguns modelos estavam em pré-venda ou indisponíveis na consulta. |
+| `hsp.csv` | 1 localidade | 1 | HSP de São Paulo/SP transcrito de consulta ao CRESESB/SunData; evidência em `evidencias/`. |
+| `outros_custos.csv` | preenchido | — | Inclui estimativas e respectivas fontes; mão de obra não é cotação formal. |
 
-## O que há aqui
+## Conferência antes de uma instalação real
 
-| Arquivo | Linhas | Mínimo exigido |
-|---|---|---|
-| modulos.csv | 8 (Canadian Solar, Ronma, Osda, TCL, Honor, Jinko, Trina, LONGi) | 10 |
-| inversores.csv | 8 (Growatt MIC3000TL-X; Deye SUN-5K-G; BelEnergy BEL3KG; Deye SUN-3K-G04; híbridos Deye SG04LP1 de 3, 5 e 6 kW e SG02LP2 de 5 kW) | 8 |
-| baterias.csv | 6 (Deye SE-G5.1 Pro-B, Deye SE-F5, MUST LP16, Livoltek BLF-B51100, GetPower GPLIFE48-100TS, Unipower UPLFP48) | 6 |
+1. Abra `url_fonte` de cada equipamento e confirme preço, estoque, frete, variante exata e quantidade mínima.
+2. Confira parâmetros elétricos no datasheet oficial do fabricante e compare modelo/variante com o registro comercial.
+3. Atualize `preco_brl`, `data_coleta`, `fornecedor` e `observacao` sem apagar o histórico de divergências relevantes.
+4. Rode `python validar_datasets.py` e `python -m unittest discover -s tests -t .`.
+5. Não trate o orçamento gerado como proposta comercial final ou projeto elétrico executivo.
 
-Faltam também `hsp.csv` (consulta ao CRESESB/SunData, que é um formulário interativo) e `outros_custos.csv`.
-Com estes candidatos, os dois cenários (sem e com bateria) já rodam no sistema usando um HSP de exemplo.
-
-## Dica para completar a lista
-As páginas de produto da Minha Casa Solar (minhacasasolar.com.br) trazem ficha elétrica e preço na mesma página, e têm datasheet em PDF.
-Escolham os itens que faltam nestas categorias e repitam o método acima:
-painéis em /painel-solar/acima-de-370w, inversores string em /inversor/inversor-on-grid/inversor-string,
-híbridos em /inversor-hibrido e baterias em /baterias/bateria-estacionaria/bateria-solar/bateria-de-litio.
-Cuidado com lojas estrangeiras (preço em euro ou dólar) e com valores que diferem entre lojas: sempre confira o datasheet do fabricante.
+As datas registradas nos CSVs representam a consulta documentada em outubro de 2026, não uma garantia de que os links e preços continuem válidos.

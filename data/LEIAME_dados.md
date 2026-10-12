@@ -1,25 +1,31 @@
 # Datasets de equipamentos e HSP
 
-Arquivos desta pasta: `hsp.csv`, `modulos.csv`, `inversores.csv`, `baterias.csv`.
-Eles estão **só com o cabeçalho**: os dados precisam ser reais e pesquisados pela equipe.
+A pasta contém `hsp.csv`, `modulos.csv`, `inversores.csv`, `baterias.csv` e `outros_custos.csv`. Os dados foram reunidos a partir de fontes públicas e são destinados a um exercício acadêmico de pré-dimensionamento.
 
-## Regras
-- Apenas produtos reais comercializados no Brasil. **Não use dados fictícios.**
-- Especificações técnicas: datasheet do fabricante. Preços: loja/fornecedor brasileiro.
-- Ponto como separador decimal (`550.0`), sem unidade nem `R$` nas células.
-- Unidades: W, Wp, V, A, kWh, Ah, % (0 a 100), BRL.
-- `compativel_bateria` em inversores: `sim` ou `nao`. `tipo`: por exemplo `string` ou `hibrido`.
-- Preencha `fornecedor`, `data_coleta` (AAAA-MM-DD) e `url_fonte` em todas as linhas.
-- Quantidades mínimas: 10 módulos, 8 inversores (pelo menos 2 híbridos), 6 baterias.
+## Regras de formato
 
-## Como conferir
-`python -m unittest discover -s tests -t .` roda os testes automáticos.
-`python validar_datasets.py` valida os CSVs e mostra erros por arquivo e linha.
+- CSV em UTF-8, separador vírgula e ponto como separador decimal (por exemplo, `550.0`); não inclua unidades nem `R$` nos campos numéricos.
+- Unidades esperadas: Wp, V, A, kWh, Ah, porcentagem de 0 a 100 e BRL.
+- `compativel_bateria` deve ser `sim` ou `nao`; `tipo` identifica, por exemplo, inversor `string` ou `hibrido`.
+- Cada equipamento deve ter identificador, fabricante/modelo, especificações, preço, fornecedor, data de coleta e URL da fonte.
+- Quantidades mínimas: 10 módulos, 8 inversores (pelo menos 2 híbridos) e 6 baterias.
 
-## Fontes (preencha ao coletar)
-| Dataset | Fonte | Data da coleta | Observação |
-|---|---|---|---|
-| hsp.csv | (CRESESB/SunData ou Atlas Brasileiro de Energia Solar) | | |
-| modulos.csv | | | |
-| inversores.csv | | | |
-| baterias.csv | | | |
+## Validação
+
+Execute na raiz do projeto:
+
+```bash
+python validar_datasets.py
+python -m unittest discover -s tests -t .
+```
+
+O validador verifica estrutura, campos, valores e quantidades; ele não verifica automaticamente a veracidade das especificações, o estoque, o preço atual ou a adequação de um equipamento a uma instalação real.
+
+## Fontes e limitações
+
+- HSP: consulta ao CRESESB/SunData para São Paulo/SP; transcrição e data da consulta em `evidencias/sundata_sao_paulo_2026-10-11.txt` e `data/hsp.csv`.
+- Módulos, inversores e baterias: cada registro traz `url_fonte`; quando disponível, `fonte_especificacao` identifica a ficha técnica utilizada. Consulte também `data/candidatos/LEIAME.md`.
+- Outros custos: cada item contém fonte e/ou observação. O custo de instalação é uma estimativa de referência, não cotação de instalador.
+- Cenários: o consumo de 160 kWh/mês é um valor simulado para demonstrar o fluxo, não um dado medido nem uma média oficial atribuída à EPE.
+
+Preços e disponibilidade mudam. Antes de qualquer uso comercial ou instalação, confirme os dados com o fornecedor e submeta o dimensionamento à análise de profissional habilitado.

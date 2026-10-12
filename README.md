@@ -16,11 +16,11 @@ Requer Python 3. O sistema usa só a biblioteca padrão; o `matplotlib` é opcio
 python main.py                                  # menu do sistema
 python -m unittest discover -s tests -t .       # testes automáticos
 python validar_datasets.py                      # confere os CSVs de data/
-python cenarios.py --consumo 346 --hsp 4.5 --fonte-hsp "CRESESB/SunData, Cidade/UF" --cidade Cidade --uf SP
+python cenarios.py --consumo 160 --hsp 4.65 --fonte-hsp "CRESESB/SunData; São Paulo/SP; evidência registrada" --cidade "São Paulo" --uf SP --percentual 100 --autonomia 12 --nota "Consumo simulado para demonstração acadêmica; não é consumo medido de imóvel real."
 ```
 
 `cenarios.py` gera `evidencias/cenario_sem_bateria.txt` e `evidencias/cenario_com_bateria.txt`.
-Use o consumo e o HSP do imóvel de teste (nos cenários entregues, o consumo é simulado: ver a seção de cenários).
+Use o consumo e o HSP do imóvel de teste. Nos cenários entregues, o consumo é simulado; veja a seção de cenários e `docs/PREMISSAS_E_FONTES.md`.
 
 ## Fluxo do produto
 
@@ -61,7 +61,7 @@ inversor e strings (com módulos extras, se preciso) → baterias (opcional) →
 
 ### Fator de desempenho global (η = 0,75)
 Adotou-se η = 0,75 como fator de desempenho global (Performance Ratio) do sistema. Ele agrupa, de forma simplificada, perdas por temperatura, sujeira, sombreamento parcial, descasamento entre módulos, queda de tensão nos cabos e eficiência de conversão do inversor. O valor é **conservador** em relação a estudos brasileiros de sistemas conectados à rede, que medem PR em torno de 80%: dissertação da UTFPR (Paraná, 2020), com PR médio estimado próximo de 80%, e artigo do CBENS, com PR de 80,29% em um sistema analisado. É uma premissa de pré-dimensionamento; em projeto real o PR deve ser calculado com dados do local e dos equipamentos.
-Referência técnica complementar: *Manual de Engenharia para Sistemas Fotovoltaicos* (CEPEL/CRESESB). (a equipe deve indicar capítulo e página se for citar o manual)
+Referência técnica geral: PINHO, João Tavares; GALDINO, Marco Antonio (org.). *Manual de Engenharia para Sistemas Fotovoltaicos*. 2. ed. Rio de Janeiro: CEPEL/CRESESB, 2014. Disponível em: https://cresesb.cepel.br/publicacoes/download/Manual_de_Engenharia_FV_2014.pdf. A referência é indicada como leitura geral; não se atribui a ela uma página específica para a escolha do fator η = 0,75.
 
 ### Margens de tensão (1,12 e 0,85)
 O dataset mínimo não traz os coeficientes de temperatura de cada módulo. Por isso o sistema aplica margens fixas sobre as tensões em STC:
@@ -88,11 +88,11 @@ Vêm de `data/outros_custos.csv`, cada item com fonte. A mão de obra de instala
 | Dataset | Fonte | Observação |
 |---|---|---|
 | `hsp.csv` | CRESESB/SunData (http://cresesb.cepel.br/index.php#data), estação São Paulo/SP a 5,4 km do ponto de referência, plano inclinado com ângulo igual à latitude (24°), média anual de 4,65 kWh/m²/dia | Print e transcrição em `evidencias/`. Confirmar se a cidade do imóvel de teste é São Paulo/SP |
-| `modulos.csv` | Lojas: Minha Casa Solar, Eletrotrafo, Direta Energia Solar, Buyers Energy. Fichas: página da loja, datasheets de TCL, Honor e Trina, distribuidora Techlux (Ronma) e registro INMETRO | Cada linha traz o link do produto e a fonte da ficha. Preço e estoque mudam: conferir antes de entregar |
+| `modulos.csv` | Lojas: Minha Casa Solar, Eletrotrafo, Direta Energia Solar, Buyers Energy e Stentor do Brasil. Fichas: páginas dos fornecedores e datasheet Leapton, além de datasheets de TCL, Honor e Trina, distribuidora Techlux (Ronma) e registro INMETRO | Cada linha traz o link do produto e a fonte da ficha. M09 e M10 completam o mínimo de 10 módulos; ambos estavam indisponíveis na consulta e M10 exige compra mínima de 12 unidades. Preço e estoque devem ser reconfirmados antes de usar em orçamento real |
 | `inversores.csv` | Lojas: Minha Casa Solar e Neosolar. Fichas: página da loja e site da Deye (série SG04LP1) | Alguns itens estavam em pré-venda ou indisponíveis (ver coluna `observacao`) |
 | `baterias.csv` | Lojas: MeuGerador, Energy Shop e Minha Casa Solar. Ficha da Deye no site do fabricante | Livoltek e Unipower estavam em pré-venda |
 | `outros_custos.csv` | SGV Solar, Shopuruara, Energy Shop e artigo de mercado (larpontual.com.br) | Instalação é estimativa de referência |
-| Consumo de referência dos cenários | Consumo médio mensal de uma unidade residencial no Brasil, cerca de 160 kWh, atribuído à EPE (2023) em trabalho acadêmico (https://static.even3.com/anais/1298453.pdf) | **Valor simulado**, citado de forma indireta: conferir no Anuário Estatístico de Energia Elétrica da EPE antes de entregar |
+| Consumo de referência dos cenários | Entrada simulada de 160 kWh/mês, escolhida para demonstrar o funcionamento do sistema | Não é consumo medido nem média oficial atribuída à EPE. Substituir pelo consumo do imóvel quando houver dados reais |
 
 ## Cenários testados
 Entradas comuns: consumo de referência **simulado** de 160 kWh/mês (média nacional residencial, não é um imóvel real), atendimento de 100%, HSP de 4,65 kWh/m²/dia (CRESESB/SunData, São Paulo/SP, 24°, média anual), η = 0,75. Resultados completos em `evidencias/cenario_sem_bateria.txt` e `evidencias/cenario_com_bateria.txt`.
@@ -115,3 +115,19 @@ Observações: os preços dependem da confirmação dos links (alguns itens esta
 - Preços e disponibilidade de loja variam; as consultas valem para as datas indicadas.
 - A validação elétrica é simplificada (margens de tensão e de corrente) e não substitui projeto executivo.
 - Não considera sombreamento, orientação, inclinação específica do telhado nem perdas do local.
+
+
+## Checklist de aceitação manual antes da apresentação
+
+Os testes automatizados cobrem funções e casos de regressão, mas a equipe também deve percorrer o fluxo de interface no terminal. Use uma base de teste separada e dados não reais.
+
+- [ ] Cadastrar usuário e confirmar rejeição de e-mail duplicado/senha inválida.
+- [ ] Entrar com credenciais válidas e confirmar rejeição de senha incorreta.
+- [ ] Cadastrar imóvel, editar os dados e excluir somente após confirmação.
+- [ ] Registrar consumos em meses diferentes e verificar ordenação cronológica, média, máximo e mês correspondente.
+- [ ] Conferir que um usuário não lista, consulta, edita nem exclui imóvel, consumo ou proposta de outro usuário.
+- [ ] Executar o dimensionamento com e sem bateria e conferir avisos de compatibilidade, custos e proposta salva.
+- [ ] Fechar e reabrir o programa e confirmar persistência dos registros.
+- [ ] Validar os CSVs e executar toda a suíte de testes antes de gerar o ZIP final.
+
+O checklist acima é um roteiro de aceitação para a equipe; itens não marcados não devem ser apresentados como verificados manualmente.

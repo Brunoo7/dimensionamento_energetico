@@ -1,30 +1,29 @@
-NOTA: Consumo de referência SIMULADO de 160 kWh/mês (média nacional de uma unidade residencial, EPE 2023, citada em https://static.even3.com/anais/1298453.pdf). Não é o consumo de um imóvel real. Equipamentos e preços: data/*.csv (consultas de 2026-10-11 e 2026-10-12).
+NOTA: Consumo simulado para demonstração acadêmica; não é consumo medido de imóvel real. Preços de catálogo consultados em 12/10/2026; estoque e prazo devem ser confirmados com as lojas.
 
 ===== PROPOSTA PRELIMINAR DE SISTEMA FOTOVOLTAICO =====
 Imóvel: Cenário de teste (São Paulo/SP)
 Consumo de referência utilizado: 160.00 kWh/mês (valor informado)
 Percentual de atendimento solicitado: 100%
 Energia mensal que se pretende gerar: 160.00 kWh/mês
-HSP utilizado: 4.65 kWh/m²/dia (fonte: CRESESB/SunData, Sao Paulo/SP, plano inclinado 24 graus, media anual (consulta de 2026-10-11))
+HSP utilizado: 4.65 kWh/m²/dia (fonte: CRESESB/SunData; São Paulo/SP; consulta registrada em evidencias)
 Fator de desempenho (η): 0.75 | dias considerados: 30
 Potência FV calculada: 1.529 kWp
 Potência FV instalada: 1.650 kWp
 Módulos: 3 × Canadian Solar CS6W-550MS (550 Wp)
 Ligação: 1 string(s) de 3 módulo(s) em série (Voc a frio 167 V, Vmp a quente 106 V)
 Inversor: Deye SUN-3K-G04P1-EU-AM1 (3000 W, tipo string)
-  Aviso: Corrente de operação dos módulos (13.2 A por MPPT) acima da corrente máxima de entrada do inversor (13.0 A): o inversor limita a corrente e pode haver pequena perda de geração.
 Armazenamento: não (sistema sem baterias)
 Geração mensal estimada: 172.6 kWh/mês (107.9% do consumo de referência)
 
 --- Orçamento ---
-  3 × Módulo Canadian Solar CS6W-550MS (M01): R$ 470,15 un. = R$ 1.410,45
-  1 × Inversor Deye SUN-3K-G04P1-EU-AM1 (I08): R$ 1.611,82 un. = R$ 1.611,82
-Custo dos equipamentos: R$ 3.022,27
+  3 × Módulo Canadian Solar CS6W-550MS (M01): R$ 449,90 un. = R$ 1.349,70
+  1 × Inversor Deye SUN-3K-G04P1-EU-AM1 (I08): R$ 1.699,00 un. = R$ 1.699,00
+Custo dos equipamentos: R$ 3.048,70
   Outros custos - Estrutura de fixação para telhado cerâmico: R$ 412,50
   Outros custos - Cabos solares 6 mm2 e conectores MC4: R$ 279,00
   Outros custos - String box CC com DPS e seccionadora: R$ 419,00
   Outros custos - Instalação (mão de obra, projeto, ART e homologação): R$ 1.402,50
 Outros custos (total): R$ 2.513,00
-CUSTO TOTAL ESTIMADO: R$ 5.535,27
+CUSTO TOTAL ESTIMADO: R$ 5.561,70
 
 Pré-dimensionamento acadêmico e estimativa de custos. Não substitui projeto elétrico executivo, responsabilidade técnica ou análise de profissional habilitado (área disponível, orientação, sombreamento, proteções, aterramento, normas e requisitos da distribuidora precisam ser verificados).
