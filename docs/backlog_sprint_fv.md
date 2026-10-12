@@ -12,7 +12,7 @@ Premissas documentadas no repositório (docs/PREMISSAS_E_FONTES.md), cada uma co
 
 - Consumo de referência padrão: **média** dos meses cadastrados (o máximo continua disponível como alternativa). Recomendado ter 12 meses; com menos de 12, o sistema avisa.
 - D = 30 dias. η = 0,75. HSP vem de fonte oficial (CRESESB/SunData), com fonte e data registradas.
-- Dados técnicos vêm do datasheet do fabricante. Preços vêm de fornecedores que vendem no Brasil, com `fornecedor`, `data_coleta` e `url_fonte`. Nenhum dado fictício.
+- Dados técnicos vêm do datasheet do fabricante quando disponível, ou da página do fornecedor (a fonte de cada linha está em `fonte_especificacao`). Preços vêm de fornecedores que vendem no Brasil, com `fornecedor`, `data_coleta` e `url_fonte`. Nenhum dado fictício.
 - Razão FV/CA do inversor, margens de tensão, corrente e custos "demais" ficam em arquivos de parâmetros, nunca fixos no código.
 - Fórmula de baterias: N_bat = ⌈C_bat / capacidade nominal da bateria⌉, com C_bat = E_autonomia / (DoD × η_bat). O DoD já está em C_bat, então não é aplicado de novo no cálculo da quantidade.
 

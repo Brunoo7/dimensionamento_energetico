@@ -23,9 +23,11 @@ K21,Integração ao menu,E8,PB36,Concluído,PB34,main.py
 K22,Rodar cenários sem e com bateria (consumo simulado de 160 kWh/mês),E9,PB37,Concluído,"K06 a K08, K18",evidencias/; refazer com consumo real se houver
 K23,Guardar evidência reproduzível do SunData em evidencias/,E9,PB37,Em revisão,K04,evidência textual registrada; conferir se a rubrica exige captura de tela original
 K24,"Documentar fontes, premissas e cenários no README",E9,PB38,Concluído,K22,"README.md contém premissas, fontes, cenários e limitações; revisar após mudanças nos dados"
-K25,Exportar o backlog da sprint em PDF e atualizar o repositório,E9,PB38,Concluído,,Product_Backlog_Sprint_FV.pdf regenerado; publicação/commit final ainda pendente
+K25,Exportar o backlog da sprint em PDF e atualizar o repositório,E9,PB38,Concluído,,Product_Backlog_Sprint_FV.pdf na raiz; conferir commit e push finais
 K26,Confirmar cada link dos candidatos (preço e estoque),E3,PB21 a PB23,Em andamento,K06 a K08,Aprofundados 3 produtos dos cenários; restantes precisam de verificação individual
 K27,Editar e excluir imóvel,Sprint 1,PB04,Concluído,,"imovel.py, main.py"
 K28,Gráfico do histórico de consumo,Sprint 1,PB12,Concluído,,grafico.py
 K29,Senha com PBKDF2 e sal,Melhoria,,Concluído,,usuario.py
 K30,Acrescentar módulos extras para compatibilizar com a faixa MPPT,E5,PB39,Concluído,"PB26, PB28, PB29",dimensionamento.py
+K31,Teste manual do fluxo completo pelo menu,E9,PB38,Concluído,K21,docs/TESTE_DE_ACEITACAO.md; isolamento entre usuários e migração de banco antigo só por testes automáticos
+K32,Memória de cálculo passo a passo dos cenários,E9,PB37,Concluído,K22,docs/MEMORIA_DE_CALCULO.md

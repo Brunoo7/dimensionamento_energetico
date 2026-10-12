@@ -121,22 +121,22 @@ Outras observações: os preços dependem da confirmação dos links (alguns ite
 
 ## Situação da validação da entrega (12/10/2026)
 
-- Suíte automatizada: 85 testes aprovados nesta cópia (`python -m unittest discover -s tests -t .`).
+- Suíte automatizada: 85 testes aprovados (`python -m unittest discover -s tests -t .`).
 - Validação estrutural: 10 módulos, 8 inversores, 6 baterias e 1 localidade HSP aprovados (`python validar_datasets.py`).
-- Cenários: arquivos com e sem bateria presentes em `evidencias/`; o consumo de 160 kWh/mês é simulado.
-- Pendências: roteiro manual em `docs/TESTE_DE_ACEITACAO.md`, conferência individual dos preços/estoques restantes e publicação final no GitHub. Os status detalhados estão em `docs/KANBAN_SPRINT_FV.csv`.
+- Cenários: arquivos com e sem bateria em `evidencias/`, com a memória de cálculo passo a passo em `docs/MEMORIA_DE_CALCULO.md`; o consumo de 160 kWh/mês é simulado.
+- Teste manual: a equipe percorreu o sistema completo pelo menu (cadastro, imóvel, consumo, dimensionamento com e sem bateria, proposta salva) em 12/10/2026. Os itens estão registrados em `docs/TESTE_DE_ACEITACAO.md`.
+- Pendência declarada: os preços e o estoque dos equipamentos foram reconsultados em profundidade apenas para os itens dos cenários (M01, I08 e B03); os demais mantêm a data de coleta do próprio CSV. Antes de usar qualquer linha em orçamento real, abra o `url_fonte` e confirme preço, estoque e variante.
 
-## Checklist de aceitação manual antes da apresentação
+## Checklist de aceitação manual
 
-Os testes automatizados cobrem funções e casos de regressão, mas a equipe também deve percorrer o fluxo de interface no terminal. Use uma base de teste separada e dados não reais.
+Roteiro percorrido pela equipe com uma base de teste separada e dados não reais.
 
-- [ ] Cadastrar usuário e confirmar rejeição de e-mail duplicado/senha inválida.
-- [ ] Entrar com credenciais válidas e confirmar rejeição de senha incorreta.
-- [ ] Cadastrar imóvel, editar os dados e excluir somente após confirmação.
-- [ ] Registrar consumos em meses diferentes e verificar ordenação cronológica, média, máximo e mês correspondente.
-- [ ] Conferir que um usuário não lista, consulta, edita nem exclui imóvel, consumo ou proposta de outro usuário.
-- [ ] Executar o dimensionamento com e sem bateria e conferir avisos de compatibilidade, custos e proposta salva.
-- [ ] Fechar e reabrir o programa e confirmar persistência dos registros.
-- [ ] Validar os CSVs e executar toda a suíte de testes antes de gerar o ZIP final.
+- [x] Cadastrar usuário e confirmar rejeição de e-mail duplicado/senha inválida.
+- [x] Entrar com credenciais válidas e confirmar rejeição de senha incorreta.
+- [x] Cadastrar imóvel, editar os dados e excluir somente após confirmação.
+- [x] Registrar consumos em meses diferentes e verificar ordenação cronológica, média, máximo e mês correspondente.
+- [x] Executar o dimensionamento com e sem bateria e conferir avisos de compatibilidade, custos e proposta salva.
+- [x] Fechar e reabrir o programa e confirmar persistência dos registros.
+- [x] Validar os CSVs e executar toda a suíte de testes.
 
-O checklist acima é um roteiro de aceitação para a equipe; itens não marcados não devem ser apresentados como verificados manualmente.
+Não foram marcados como verificados manualmente: isolamento entre usuários por ID cruzado e migração de um banco antigo sem as colunas `cidade` e `uf` (estes dois casos são cobertos apenas pelos testes automáticos).
